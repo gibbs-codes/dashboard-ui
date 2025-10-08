@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* TV Theme Colors */
+  --tv-bg-primary: #0f172a;
+  --tv-bg-secondary: #1e293b;
+  --tv-bg-tertiary: #334155;
+  --tv-text-primary: #f1f5f9;
+  --tv-text-secondary: #cbd5e1;
+  --tv-text-muted: #94a3b8;
+  --tv-accent-primary: #3b82f6;
+  --tv-accent-secondary: #60a5fa;
+  --tv-accent-success: #10b981;
+  --tv-accent-warning: #f59e0b;
+  --tv-accent-error: #ef4444;
+
+  /* Projector Theme Colors */
+  --projector-bg-primary: #000000;
+  --projector-bg-secondary: #1a1a1a;
+  --projector-bg-tertiary: #2d2d2d;
+  --projector-text-primary: #ffffff;
+  --projector-text-secondary: #e5e5e5;
+  --projector-text-muted: #a3a3a3;
+  --projector-accent-primary: #0ea5e9;
+  --projector-accent-secondary: #06b6d4;
+  --projector-accent-success: #22c55e;
+  --projector-accent-warning: #fbbf24;
+  --projector-accent-error: #f87171;
+}
+
+@layer base {
+  html {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-width: 100vw;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  /* Remove focus outline for mouse users, keep for keyboard users */
+  *:focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  *:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* TV Display Utilities */
+  .tv-container {
+    @apply bg-tv-bg-primary text-tv-text-primary;
+  }
+
+  .tv-card {
+    @apply bg-tv-bg-secondary rounded-lg shadow-lg p-6;
+  }
+
+  .tv-text {
+    @apply text-tv-text-primary;
+  }
+
+  /* Projector Display Utilities */
+  .projector-container {
+    @apply bg-projector-bg-primary text-projector-text-primary;
+  }
+
+  .projector-card {
+    @apply bg-projector-bg-secondary rounded-lg shadow-2xl p-8 border border-projector-bg-tertiary;
+  }
+
+  .projector-text {
+    @apply text-projector-text-primary;
+  }
+
+  /* Common Display Utilities */
+  .display-heading {
+    @apply font-bold tracking-display;
+  }
+
+  .display-content {
+    @apply leading-relaxed;
+  }
+}
+
+@layer utilities {
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  .text-shadow-md {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  .text-shadow-xl {
+    text-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  }
+}

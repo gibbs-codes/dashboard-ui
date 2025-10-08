@@ -1,0 +1,226 @@
+/* Projector Display Specific Styles */
+/* Optimized for wall projection with high contrast and viewport scaling */
+
+:root {
+  /* Viewport scale for projector (0.6x for wall projection) */
+  --projector-scale: 0.6;
+  --projector-base-size: 1920px;
+  --projector-content-width: calc(var(--projector-base-size) * var(--projector-scale));
+}
+
+html {
+  /* Maximum contrast for projector visibility */
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+
+  /* Prevent subpixel rendering issues on projection */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+body {
+  /* Apply viewport scaling for projector */
+  transform: scale(var(--projector-scale));
+  transform-origin: top left;
+  width: calc(100vw / var(--projector-scale));
+  height: calc(100vh / var(--projector-scale));
+
+  /* Prevent overscroll */
+  overscroll-behavior: none;
+
+  /* Larger base font size for projection */
+  font-size: 20px;
+
+  /* Projector-safe area (larger margins for wall projection) */
+  padding: env(safe-area-inset-top, 40px)
+           env(safe-area-inset-right, 40px)
+           env(safe-area-inset-bottom, 40px)
+           env(safe-area-inset-left, 40px);
+}
+
+/* Projector Display Container */
+.projector-display {
+  width: 100%;
+  height: 100%;
+  background-color: var(--projector-bg-primary);
+  color: var(--projector-text-primary);
+
+  /* Maximum contrast */
+  filter: contrast(1.15) brightness(1.05);
+}
+
+/* High contrast text rendering for projector */
+.projector-text-optimized {
+  /* Bold text for maximum visibility on projection */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+
+  /* Enhanced text shadow for projection readability */
+  text-shadow:
+    0 0 8px rgba(0, 0, 0, 0.8),
+    0 2px 4px rgba(0, 0, 0, 0.6),
+    0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Projector-specific animations - slower for better visibility */
+@media (prefers-reduced-motion: no-preference) {
+  .projector-animate {
+    transition-duration: 500ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Prevent text selection on projector interface */
+.projector-no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Projector-optimized focus states - high visibility */
+.projector-focusable:focus,
+.projector-focusable:focus-visible {
+  outline: 6px solid var(--projector-accent-primary);
+  outline-offset: 6px;
+  box-shadow:
+    0 0 0 12px rgba(14, 165, 233, 0.3),
+    0 0 20px rgba(14, 165, 233, 0.5);
+}
+
+/* Projector grid layout - larger gaps for visibility */
+.projector-grid {
+  display: grid;
+  gap: 3rem;
+  padding: 3rem;
+}
+
+/* High contrast cards for projector */
+.projector-card-high-contrast {
+  background-color: var(--projector-bg-secondary);
+  border: 3px solid var(--projector-bg-tertiary);
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.8),
+    0 0 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Projector-safe typography - extra large and bold */
+.projector-heading-primary {
+  font-size: clamp(3rem, 6vw, 7rem);
+  font-weight: 800;
+  line-height: 1.1;
+  text-shadow:
+    0 0 12px rgba(0, 0, 0, 0.9),
+    0 4px 8px rgba(0, 0, 0, 0.7),
+    0 8px 16px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.02em;
+}
+
+.projector-heading-secondary {
+  font-size: clamp(2rem, 4vw, 5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  text-shadow:
+    0 0 10px rgba(0, 0, 0, 0.9),
+    0 4px 8px rgba(0, 0, 0, 0.6),
+    0 6px 12px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.03em;
+}
+
+.projector-body-text {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 1.7;
+  font-weight: 500;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* High visibility borders */
+.projector-border {
+  border: 2px solid var(--projector-accent-primary);
+}
+
+.projector-border-thick {
+  border: 4px solid var(--projector-accent-primary);
+}
+
+/* Enhanced visibility for interactive elements */
+.projector-button {
+  background-color: var(--projector-accent-primary);
+  color: var(--projector-bg-primary);
+  font-weight: 700;
+  font-size: clamp(1.25rem, 2.5vw, 2rem);
+  padding: 1.5rem 3rem;
+  border: 3px solid transparent;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(14, 165, 233, 0.3);
+  transition: all 300ms ease;
+}
+
+.projector-button:hover,
+.projector-button:focus {
+  background-color: var(--projector-accent-secondary);
+  border-color: var(--projector-text-primary);
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(14, 165, 233, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Status indicators with maximum visibility */
+.projector-status-success {
+  color: var(--projector-accent-success);
+  text-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+}
+
+.projector-status-warning {
+  color: var(--projector-accent-warning);
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.6);
+}
+
+.projector-status-error {
+  color: var(--projector-accent-error);
+  text-shadow: 0 0 10px rgba(248, 113, 113, 0.6);
+}
+
+/* Pulsing animation for important elements */
+@keyframes projector-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
+}
+
+.projector-pulse {
+  animation: projector-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Ensure content is visible with minimum contrast ratio */
+@media (prefers-contrast: more) {
+  body {
+    filter: contrast(1.3);
+  }
+
+  .projector-text-optimized {
+    font-weight: 700;
+    text-shadow:
+      0 0 12px rgba(0, 0, 0, 1),
+      0 4px 8px rgba(0, 0, 0, 0.8);
+  }
+}
+
+/* Projector ambient light compensation */
+body.projector-bright-room {
+  filter: contrast(1.25) brightness(1.15);
+}
+
+body.projector-dark-room {
+  filter: contrast(1.1) brightness(0.95);
+}

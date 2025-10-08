@@ -1,0 +1,122 @@
+/* TV Display Specific Styles */
+/* Optimized for 1920x1080 resolution */
+
+:root {
+  /* Normal viewport settings for TV */
+  --tv-scale: 1;
+  --tv-width: 1920px;
+  --tv-height: 1080px;
+}
+
+html {
+  /* Ensure crisp rendering on TV displays */
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+body {
+  /* Prevent overscroll on TV displays */
+  overscroll-behavior: none;
+
+  /* Optimize for TV viewing distance */
+  font-size: 16px;
+
+  /* TV-safe area (accounting for overscan) */
+  padding: env(safe-area-inset-top, 20px)
+           env(safe-area-inset-right, 20px)
+           env(safe-area-inset-bottom, 20px)
+           env(safe-area-inset-left, 20px);
+}
+
+/* TV Display Container */
+.tv-display {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--tv-bg-primary);
+  color: var(--tv-text-primary);
+}
+
+/* Optimized text rendering for TV */
+.tv-text-optimized {
+  /* Slightly bolder text for better readability on TV */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+}
+
+/* TV-specific animations - smoother for lower refresh rates */
+@media (prefers-reduced-motion: no-preference) {
+  .tv-animate {
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Prevent text selection on TV interface */
+.tv-no-select {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* TV-optimized focus states for remote control navigation */
+.tv-focusable:focus,
+.tv-focusable:focus-visible {
+  outline: 4px solid var(--tv-accent-primary);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2);
+}
+
+/* TV grid layout optimizations */
+.tv-grid {
+  display: grid;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+/* Ensure proper aspect ratio for TV content */
+.tv-aspect-16-9 {
+  aspect-ratio: 16 / 9;
+}
+
+/* TV-safe typography */
+.tv-heading-primary {
+  font-size: clamp(2rem, 4vw, 4rem);
+  font-weight: 700;
+  line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tv-heading-secondary {
+  font-size: clamp(1.5rem, 3vw, 3rem);
+  font-weight: 600;
+  line-height: 1.3;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tv-body-text {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  line-height: 1.6;
+}
+
+/* Prevent HDMI overscan issues */
+@media screen and (min-width: 1920px) {
+  body {
+    max-width: 1880px;
+    max-height: 1040px;
+    margin: 0 auto;
+  }
+}
+
+/* TV power-saving mode - reduce brightness after inactivity */
+body.tv-dim-mode {
+  filter: brightness(0.7);
+  transition: filter 1s ease-in-out;
+}
+
+body.tv-dim-mode:hover,
+body.tv-dim-mode:focus-within {
+  filter: brightness(1);
+}
