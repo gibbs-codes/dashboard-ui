@@ -15,3 +15,4 @@ export { Clock, CompactClock } from './Clock.jsx';
 export { DateDisplay, CompactDateDisplay } from './DateDisplay.jsx';
 export { Weather, WeatherCard } from './Weather.jsx';
 export { NextEvent, CompactNextEvent } from './NextEvent.jsx';
+export { ConnectionIndicator, ConnectionIndicatorDetailed } from './ConnectionIndicator.jsx';

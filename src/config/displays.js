@@ -8,196 +8,85 @@
  * Optimized for 1920x1080 television screens
  */
 export const TV_CONFIG = {
-  // Display identifier
-  id: 'tv',
   name: 'TV Display',
-  type: 'tv',
-
-  // Viewport settings
-  viewport: {
-    mode: 'normal',
+  viewport: 'normal',
+  defaultProfile: 'morning',
+  refreshInterval: 30000,
+  features: {
+    generativeArt: true,
+    timeBasedGradients: true,
+    animations: true,
+  },
+  dimensions: {
     width: 1920,
     height: 1080,
-    scale: 1.0,
-    orientation: 'landscape',
-  },
-
-  // Safe area to prevent overscan issues
-  safeArea: {
-    top: 20,
-    right: 20,
-    bottom: 20,
-    left: 20,
-  },
-
-  // Refresh and polling intervals (in milliseconds)
-  intervals: {
-    dataRefresh: 30000,      // 30 seconds - main data refresh
-    weatherRefresh: 300000,  // 5 minutes - weather updates
-    transitRefresh: 60000,   // 1 minute - transit updates
-    calendarRefresh: 120000, // 2 minutes - calendar updates
-    tasksRefresh: 300000,    // 5 minutes - tasks updates
-  },
-
-  // WebSocket configuration
-  websocket: {
-    enabled: true,
-    autoReconnect: true,
-    reconnectInterval: 5000,   // 5 seconds
-    reconnectAttempts: 10,
-    heartbeatInterval: 30000,  // 30 seconds
-  },
-
-  // Feature flags
-  features: {
-    animations: true,
-    transitions: true,
-    powerSaving: true,
-    dimTimeout: 300000,        // 5 minutes - dim screen after inactivity
-    autoRefresh: true,
-    errorReporting: true,
-    debugMode: import.meta.env.VITE_ENABLE_DEBUG_MODE === 'true',
-  },
-
-  // Performance settings
-  performance: {
-    lazyLoading: false,        // Load all data immediately on TV
-    prefetchData: true,
-    cacheTimeout: 60000,       // 1 minute cache
-    maxRetries: 3,
-  },
-
-  // UI settings
-  ui: {
-    theme: 'tv',
-    fontScale: 1.0,
-    spacing: 'comfortable',
-    animations: {
-      duration: 300,           // ms
-      easing: 'ease-in-out',
-    },
-    focusVisible: true,        // For remote control navigation
-  },
-
-  // Display-specific features
-  displayFeatures: {
-    remoteControl: true,
-    voiceControl: false,
-    touchInput: false,
-    keyboardInput: false,
   },
 };
 
 /**
  * Projector Display Configuration
- * Optimized for wall projection with scaling
+ * Optimized for wall projection with 3-column layout
  */
 export const PROJECTOR_CONFIG = {
-  // Display identifier
-  id: 'projector',
   name: 'Projector Display',
-  type: 'projector',
-
-  // Viewport settings with scaling
-  viewport: {
-    mode: 'scaled',
+  viewport: 'scaled-0.6',
+  defaultProfile: 'default',
+  refreshInterval: 30000,
+  features: {
+    highContrast: true,
+    largeFonts: true,
+    animations: false,
+  },
+  dimensions: {
     width: 1920,
     height: 1080,
-    scale: 0.6,                // Scale to 60% for wall projection
-    orientation: 'landscape',
   },
-
-  // Larger safe area for projection
-  safeArea: {
-    top: 40,
-    right: 40,
-    bottom: 40,
-    left: 40,
-  },
-
-  // Refresh and polling intervals (in milliseconds)
-  intervals: {
-    dataRefresh: 30000,      // 30 seconds - main data refresh
-    weatherRefresh: 300000,  // 5 minutes - weather updates
-    transitRefresh: 60000,   // 1 minute - transit updates
-    calendarRefresh: 120000, // 2 minutes - calendar updates
-    tasksRefresh: 300000,    // 5 minutes - tasks updates
-  },
-
-  // WebSocket configuration
-  websocket: {
-    enabled: true,
-    autoReconnect: true,
-    reconnectInterval: 5000,   // 5 seconds
-    reconnectAttempts: 10,
-    heartbeatInterval: 30000,  // 30 seconds
-  },
-
-  // Feature flags
-  features: {
-    animations: true,
-    transitions: true,
-    powerSaving: false,        // Projectors typically stay on
-    dimTimeout: 0,             // No dimming on projector
-    autoRefresh: true,
-    errorReporting: true,
-    debugMode: import.meta.env.VITE_ENABLE_DEBUG_MODE === 'true',
-  },
-
-  // Performance settings
-  performance: {
-    lazyLoading: false,        // Load all data immediately
-    prefetchData: true,
-    cacheTimeout: 60000,       // 1 minute cache
-    maxRetries: 3,
-  },
-
-  // UI settings
-  ui: {
-    theme: 'projector',
-    fontScale: 1.2,            // Slightly larger for projection
-    spacing: 'spacious',
-    animations: {
-      duration: 500,           // Slower animations for better visibility
-      easing: 'ease-in-out',
-    },
-    focusVisible: false,       // No focus states on projector
-  },
-
-  // Display-specific features
-  displayFeatures: {
-    remoteControl: false,
-    voiceControl: false,
-    touchInput: false,
-    keyboardInput: false,
-    highContrast: true,        // Enhanced contrast for projection
-    ambientLightCompensation: true,
+  columns: {
+    left: { width: '30%' },
+    center: { width: '40%' },
+    right: { width: '30%' },
   },
 };
 
 /**
- * Default polling interval (30 seconds)
- * Used as fallback if not specified in display config
+ * Polling and Connection Constants
  */
-export const DEFAULT_POLLING_INTERVAL = 30000;
+export const DEFAULT_POLLING_INTERVAL = 30000; // 30 seconds
+export const WS_RECONNECT_INTERVAL = 5000; // 5 seconds
+export const WS_RECONNECT_MAX_ATTEMPTS = Infinity; // Always reconnect
+export const STALE_DATA_THRESHOLD = 60000; // 1 minute
 
 /**
- * WebSocket retry settings
- * Used across all displays for WebSocket connections
+ * Time of Day Configuration
+ * Used for time-based gradients on TV display
  */
-export const WS_RETRY_CONFIG = {
-  maxAttempts: 10,
-  initialDelay: 1000,        // 1 second
-  maxDelay: 30000,           // 30 seconds
-  backoffMultiplier: 1.5,
-  reconnectOnError: true,
-  reconnectOnClose: true,
+export const TIME_OF_DAY = {
+  morning: {
+    start: 6,
+    end: 12,
+    gradient: ['#1e3a8a', '#f59e0b'], // Deep blue to amber
+  },
+  afternoon: {
+    start: 12,
+    end: 18,
+    gradient: ['#f59e0b', '#ec4899'], // Amber to pink
+  },
+  evening: {
+    start: 18,
+    end: 22,
+    gradient: ['#ec4899', '#7c3aed'], // Pink to purple
+  },
+  night: {
+    start: 22,
+    end: 6,
+    gradient: ['#1e1b4b', '#000000'], // Dark indigo to black
+  },
 };
 
 /**
  * Get display configuration by type
  * @param {string} displayType - 'tv' or 'projector'
- * @returns {object} Display configuration object
+ * @returns {Object} Display configuration object
  */
 export const getDisplayConfig = (displayType) => {
   switch (displayType?.toLowerCase()) {
@@ -212,15 +101,36 @@ export const getDisplayConfig = (displayType) => {
 };
 
 /**
- * Get refresh interval for a specific data type
- * @param {string} displayType - 'tv' or 'projector'
- * @param {string} dataType - 'weather', 'transit', 'calendar', 'tasks', or 'data'
- * @returns {number} Refresh interval in milliseconds
+ * Get current time of day period
+ * @param {Date} [date] - Optional date object (defaults to now)
+ * @returns {string} Time period: 'morning', 'afternoon', 'evening', or 'night'
  */
-export const getRefreshInterval = (displayType, dataType = 'data') => {
-  const config = getDisplayConfig(displayType);
-  const intervalKey = `${dataType}Refresh`;
-  return config.intervals[intervalKey] || DEFAULT_POLLING_INTERVAL;
+export const getTimeOfDay = (date = new Date()) => {
+  const hour = date.getHours();
+
+  if (hour >= TIME_OF_DAY.morning.start && hour < TIME_OF_DAY.morning.end) {
+    return 'morning';
+  }
+
+  if (hour >= TIME_OF_DAY.afternoon.start && hour < TIME_OF_DAY.afternoon.end) {
+    return 'afternoon';
+  }
+
+  if (hour >= TIME_OF_DAY.evening.start && hour < TIME_OF_DAY.evening.end) {
+    return 'evening';
+  }
+
+  return 'night';
+};
+
+/**
+ * Get gradient colors for current time
+ * @param {Date} [date] - Optional date object (defaults to now)
+ * @returns {Array<string>} Array of gradient color hex codes
+ */
+export const getGradientForTime = (date = new Date()) => {
+  const period = getTimeOfDay(date);
+  return TIME_OF_DAY[period].gradient;
 };
 
 /**
@@ -235,52 +145,95 @@ export const isFeatureEnabled = (displayType, featureName) => {
 };
 
 /**
- * Get WebSocket configuration for a display type
+ * Get refresh interval for a display type
  * @param {string} displayType - 'tv' or 'projector'
- * @returns {object} WebSocket configuration
+ * @returns {number} Refresh interval in milliseconds
  */
-export const getWebSocketConfig = (displayType) => {
+export const getRefreshInterval = (displayType) => {
   const config = getDisplayConfig(displayType);
-  return {
-    ...config.websocket,
-    ...WS_RETRY_CONFIG,
-  };
+  return config.refreshInterval || DEFAULT_POLLING_INTERVAL;
 };
 
 /**
- * Get viewport scaling for a display type
+ * Get default profile for a display type
  * @param {string} displayType - 'tv' or 'projector'
- * @returns {number} Scale factor
+ * @returns {string} Default profile ID
  */
-export const getViewportScale = (displayType) => {
+export const getDefaultProfile = (displayType) => {
   const config = getDisplayConfig(displayType);
-  return config.viewport.scale;
+  return config.defaultProfile || 'default';
 };
 
 /**
- * Get safe area padding for a display type
+ * Get viewport setting for a display type
  * @param {string} displayType - 'tv' or 'projector'
- * @returns {object} Safe area padding values
+ * @returns {string} Viewport setting
  */
-export const getSafeArea = (displayType) => {
+export const getViewport = (displayType) => {
   const config = getDisplayConfig(displayType);
-  return config.safeArea;
+  return config.viewport || 'normal';
 };
 
 /**
- * Display mode detection helper
- * Checks URL or environment to determine display mode
+ * Get column configuration for projector
+ * @returns {Object|null} Column configuration or null if not projector
+ */
+export const getProjectorColumns = () => {
+  return PROJECTOR_CONFIG.columns;
+};
+
+/**
+ * Detect display type from URL or environment
  * @returns {string} 'tv' or 'projector'
  */
-export const detectDisplayMode = () => {
+export const detectDisplayType = () => {
+  // Check URL path
   const path = window.location.pathname;
 
-  if (path.includes('projector')) {
+  if (path.includes('/projector') || path.includes('projector.html')) {
     return 'projector';
-  } else if (path.includes('tv')) {
+  }
+
+  if (path.includes('/tv') || path.includes('tv.html')) {
     return 'tv';
   }
 
-  // Default to TV if cannot detect
+  // Default to TV
   return 'tv';
+};
+
+/**
+ * Check if data is stale
+ * @param {Date|string|number} lastUpdate - Last update timestamp
+ * @returns {boolean} True if data is stale
+ */
+export const isDataStale = (lastUpdate) => {
+  if (!lastUpdate) return true;
+
+  const timestamp = lastUpdate instanceof Date
+    ? lastUpdate.getTime()
+    : new Date(lastUpdate).getTime();
+
+  const now = Date.now();
+  const age = now - timestamp;
+
+  return age > STALE_DATA_THRESHOLD;
+};
+
+/**
+ * Get Tailwind gradient classes for current time
+ * @param {Date} [date] - Optional date object (defaults to now)
+ * @returns {string} Tailwind gradient classes
+ */
+export const getTailwindGradientForTime = (date = new Date()) => {
+  const period = getTimeOfDay(date);
+
+  const gradientClasses = {
+    morning: 'from-blue-900 to-amber-500',
+    afternoon: 'from-amber-500 to-pink-500',
+    evening: 'from-pink-500 to-purple-600',
+    night: 'from-indigo-950 to-black',
+  };
+
+  return gradientClasses[period];
 };

@@ -1,253 +1,134 @@
 /**
  * Profile Configuration
- * Defines different dashboard profiles and display configurations
+ * Profile system optimized for signage displays (TV and Projector)
  */
-
-/**
- * Available data modules
- */
-export const DATA_MODULES = {
-  WEATHER: 'weather',
-  TRANSIT: 'transit',
-  CALENDAR: 'calendar',
-  TASKS: 'tasks',
-  STATS: 'stats',
-  NEXT_EVENT: 'nextEvent',
-};
 
 /**
  * Profile Definitions
- * Each profile specifies which data modules are visible and their settings
+ * Each profile defines what data to fetch and which components to display
  */
 export const PROFILES = {
   /**
    * Default Profile
-   * Basic information: weather and transit only
+   * Basic information: weather and transit
    */
   default: {
     id: 'default',
     name: 'Default',
-    description: 'Weather and transit information only',
-    modules: {
-      [DATA_MODULES.WEATHER]: {
-        enabled: true,
-        priority: 1,
-      },
-      [DATA_MODULES.TRANSIT]: {
-        enabled: true,
-        priority: 2,
-      },
-      [DATA_MODULES.CALENDAR]: {
-        enabled: false,
-      },
-      [DATA_MODULES.TASKS]: {
-        enabled: false,
-      },
-      [DATA_MODULES.STATS]: {
-        enabled: false,
-      },
-      [DATA_MODULES.NEXT_EVENT]: {
-        enabled: false,
+    description: 'Basic information display',
+    data: {
+      weather: true,
+      transit: true,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+    },
+    displays: {
+      tv: 'TVDefault',
+      projector: {
+        left: 'Transit',
+        center: 'ClockWeather',
+        right: 'ArtCanvas',
       },
     },
-    layout: 'simple',
-    refreshInterval: 30000, // 30 seconds
-  },
-
-  /**
-   * Personal Profile
-   * All data visible - full dashboard experience
-   */
-  personal: {
-    id: 'personal',
-    name: 'Personal',
-    description: 'All data visible - full dashboard',
-    modules: {
-      [DATA_MODULES.WEATHER]: {
-        enabled: true,
-        priority: 1,
-      },
-      [DATA_MODULES.TRANSIT]: {
-        enabled: true,
-        priority: 2,
-      },
-      [DATA_MODULES.CALENDAR]: {
-        enabled: true,
-        priority: 3,
-      },
-      [DATA_MODULES.TASKS]: {
-        enabled: true,
-        priority: 4,
-      },
-      [DATA_MODULES.STATS]: {
-        enabled: true,
-        priority: 5,
-      },
-      [DATA_MODULES.NEXT_EVENT]: {
-        enabled: true,
-        priority: 6,
-      },
-    },
-    layout: 'grid',
-    refreshInterval: 30000, // 30 seconds
-  },
-
-  /**
-   * Guest Profile
-   * Public information only - safe for visitors
-   */
-  guest: {
-    id: 'guest',
-    name: 'Guest',
-    description: 'Public information only (weather, transit)',
-    modules: {
-      [DATA_MODULES.WEATHER]: {
-        enabled: true,
-        priority: 1,
-      },
-      [DATA_MODULES.TRANSIT]: {
-        enabled: true,
-        priority: 2,
-      },
-      [DATA_MODULES.CALENDAR]: {
-        enabled: false,
-      },
-      [DATA_MODULES.TASKS]: {
-        enabled: false,
-      },
-      [DATA_MODULES.STATS]: {
-        enabled: false,
-      },
-      [DATA_MODULES.NEXT_EVENT]: {
-        enabled: false,
-      },
-    },
-    layout: 'simple',
-    refreshInterval: 60000, // 60 seconds (less frequent for guests)
   },
 
   /**
    * Morning Profile
-   * Briefing mode with stats and key information
+   * Morning briefing with weather, transit, calendar, and tasks
    */
   morning: {
     id: 'morning',
     name: 'Morning Briefing',
-    description: 'Daily briefing with stats and key information',
-    modules: {
-      [DATA_MODULES.WEATHER]: {
-        enabled: true,
-        priority: 1,
-      },
-      [DATA_MODULES.TRANSIT]: {
-        enabled: true,
-        priority: 2,
-      },
-      [DATA_MODULES.CALENDAR]: {
-        enabled: true,
-        priority: 3,
-      },
-      [DATA_MODULES.TASKS]: {
-        enabled: false,
-      },
-      [DATA_MODULES.STATS]: {
-        enabled: true,
-        priority: 4,
-      },
-      [DATA_MODULES.NEXT_EVENT]: {
-        enabled: true,
-        priority: 5,
+    description: 'Complete morning briefing with schedule and tasks',
+    data: {
+      weather: true,
+      transit: true,
+      calendar: true,
+      tasks: true,
+      nextEvent: true,
+    },
+    displays: {
+      tv: 'TVMorning',
+      projector: {
+        left: 'WeatherTransit',
+        center: 'ClockDate',
+        right: 'CalendarTasks',
       },
     },
-    layout: 'briefing',
-    refreshInterval: 30000, // 30 seconds
+  },
+
+  /**
+   * Focus Profile
+   * Minimal distraction: next event only
+   */
+  focus: {
+    id: 'focus',
+    name: 'Focus Mode',
+    description: 'Minimal distraction - next event only',
+    data: {
+      weather: false,
+      transit: false,
+      calendar: false,
+      tasks: false,
+      nextEvent: true,
+    },
+    displays: {
+      tv: 'TVFocus',
+      projector: {
+        left: 'ArtCanvas',
+        center: 'NextEventLarge',
+        right: 'ArtCanvas',
+      },
+    },
   },
 
   /**
    * Work Profile
-   * Focus on calendar, tasks, and next event
+   * Productivity mode: calendar, tasks, and next event
    */
   work: {
     id: 'work',
     name: 'Work Mode',
-    description: 'Calendar, tasks, and next event focus',
-    modules: {
-      [DATA_MODULES.WEATHER]: {
-        enabled: false,
-      },
-      [DATA_MODULES.TRANSIT]: {
-        enabled: false,
-      },
-      [DATA_MODULES.CALENDAR]: {
-        enabled: true,
-        priority: 1,
-      },
-      [DATA_MODULES.TASKS]: {
-        enabled: true,
-        priority: 2,
-      },
-      [DATA_MODULES.STATS]: {
-        enabled: false,
-      },
-      [DATA_MODULES.NEXT_EVENT]: {
-        enabled: true,
-        priority: 3,
-      },
+    description: 'Productivity mode with calendar and tasks',
+    data: {
+      weather: false,
+      transit: false,
+      calendar: true,
+      tasks: true,
+      nextEvent: true,
     },
-    layout: 'work',
-    refreshInterval: 30000, // 30 seconds
-  },
-};
-
-/**
- * Display Configuration
- * Settings for different display types (TV and Projector)
- */
-export const DISPLAY_CONFIGS = {
-  /**
-   * TV Display Configuration
-   */
-  tv: {
-    id: 'tv',
-    name: 'TV Display',
-    defaultProfile: 'personal',
-    supportedProfiles: ['default', 'personal', 'guest', 'morning', 'work'],
-    viewport: 'normal',
-    settings: {
-      resolution: {
-        width: 1920,
-        height: 1080,
-      },
-      scale: 1,
-      safeArea: {
-        top: 20,
-        right: 20,
-        bottom: 20,
-        left: 20,
+    displays: {
+      tv: 'TVWork',
+      projector: {
+        left: 'Calendar',
+        center: 'NextEventClock',
+        right: 'Tasks',
       },
     },
   },
 
   /**
-   * Projector Display Configuration
+   * Relax Profile
+   * Art mode: no information, just visuals
    */
-  projector: {
-    id: 'projector',
-    name: 'Projector Display',
-    defaultProfile: 'default',
-    supportedProfiles: ['default', 'guest', 'morning'],
-    viewport: 'scaled',
-    settings: {
-      resolution: {
-        width: 1920,
-        height: 1080,
-      },
-      scale: 0.6,
-      safeArea: {
-        top: 40,
-        right: 40,
-        bottom: 40,
-        left: 40,
+  relax: {
+    id: 'relax',
+    name: 'Relax Mode',
+    description: 'Art mode with minimal information',
+    data: {
+      weather: false,
+      transit: false,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+    },
+    displays: {
+      tv: 'TVRelax',
+      projector: {
+        left: 'ArtCanvas',
+        center: 'ClockOnly',
+        right: 'ArtCanvas',
       },
     },
   },
@@ -255,60 +136,96 @@ export const DISPLAY_CONFIGS = {
 
 /**
  * Get profile by ID
- * @param {string} profileId - The profile ID
- * @returns {object|null} Profile object or null if not found
+ * @param {string} profileId - Profile ID
+ * @returns {Object|null} Profile configuration or null if not found
  */
 export const getProfile = (profileId) => {
-  return PROFILES[profileId] || null;
+  return PROFILES[profileId] || PROFILES.default;
 };
 
 /**
- * Get display config by ID
- * @param {string} displayId - The display ID ('tv' or 'projector')
- * @returns {object|null} Display config or null if not found
+ * Validate if a profile exists
+ * @param {string} profileId - Profile ID to validate
+ * @returns {boolean} True if profile exists
  */
-export const getDisplayConfig = (displayId) => {
-  return DISPLAY_CONFIGS[displayId] || null;
+export const validateProfile = (profileId) => {
+  return Object.prototype.hasOwnProperty.call(PROFILES, profileId);
 };
 
 /**
- * Check if a module is enabled in a profile
- * @param {string} profileId - The profile ID
- * @param {string} moduleId - The module ID
- * @returns {boolean} True if module is enabled
+ * Get data requirements for a profile
+ * Returns object indicating which data sources need to be fetched
+ * @param {string} profileId - Profile ID
+ * @returns {Object} Data requirements object
  */
-export const isModuleEnabled = (profileId, moduleId) => {
+export const getDataRequirements = (profileId) => {
   const profile = getProfile(profileId);
-  if (!profile) return false;
 
-  const module = profile.modules[moduleId];
-  return module?.enabled || false;
+  if (!profile || !profile.data) {
+    return {
+      weather: false,
+      transit: false,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+    };
+  }
+
+  return { ...profile.data };
 };
 
 /**
- * Get enabled modules for a profile, sorted by priority
- * @param {string} profileId - The profile ID
- * @returns {Array} Array of enabled module IDs sorted by priority
+ * Get display configuration for a profile
+ * @param {string} profileId - Profile ID
+ * @param {string} displayType - Display type ('tv' or 'projector')
+ * @returns {Object|string|null} Display configuration
  */
-export const getEnabledModules = (profileId) => {
+export const getDisplayConfig = (profileId, displayType) => {
   const profile = getProfile(profileId);
-  if (!profile) return [];
 
-  return Object.entries(profile.modules)
-    .filter(([_, config]) => config.enabled)
-    .sort((a, b) => (a[1].priority || 999) - (b[1].priority || 999))
-    .map(([moduleId, _]) => moduleId);
+  if (!profile || !profile.displays) {
+    return null;
+  }
+
+  return profile.displays[displayType] || null;
 };
 
 /**
- * Validate if a profile is supported by a display
- * @param {string} displayId - The display ID
- * @param {string} profileId - The profile ID
- * @returns {boolean} True if profile is supported
+ * Get all profile IDs
+ * @returns {Array<string>} Array of profile IDs
  */
-export const isProfileSupported = (displayId, profileId) => {
-  const displayConfig = getDisplayConfig(displayId);
-  if (!displayConfig) return false;
+export const getAllProfileIds = () => {
+  return Object.keys(PROFILES);
+};
 
-  return displayConfig.supportedProfiles.includes(profileId);
+/**
+ * Get all profiles
+ * @returns {Object} All profiles
+ */
+export const getAllProfiles = () => {
+  return { ...PROFILES };
+};
+
+/**
+ * Check if data type is required for a profile
+ * @param {string} profileId - Profile ID
+ * @param {string} dataType - Data type to check (weather, transit, etc.)
+ * @returns {boolean} True if data type is required
+ */
+export const isDataRequired = (profileId, dataType) => {
+  const requirements = getDataRequirements(profileId);
+  return requirements[dataType] || false;
+};
+
+/**
+ * Get profile metadata (without data/display configs)
+ * Useful for UI selectors
+ * @returns {Array<Object>} Array of profile metadata
+ */
+export const getProfileMetadata = () => {
+  return Object.values(PROFILES).map(profile => ({
+    id: profile.id,
+    name: profile.name,
+    description: profile.description,
+  }));
 };

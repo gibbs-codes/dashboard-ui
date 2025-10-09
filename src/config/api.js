@@ -18,8 +18,12 @@ export const ENDPOINTS = {
     refresh: '/api/dashboard/refresh',
   },
 
-  // Profile endpoint
-  profile: '/api/profile',
+  // Profile endpoints
+  profile: {
+    get: '/api/profile',
+    set: '/api/profile',
+    history: '/api/profile/history',
+  },
 
   // Transit endpoints
   transit: {
@@ -83,4 +87,24 @@ export const STATUS_CODES = {
   NOT_FOUND: 404,
   SERVER_ERROR: 500,
   SERVICE_UNAVAILABLE: 503,
+};
+
+/**
+ * Get dashboard data URL with profile query parameter
+ * @param {string} profile - Profile ID (e.g., 'morning', 'work', 'default')
+ * @returns {string} Dashboard data URL with profile param
+ */
+export const getDashboardDataUrl = (profile) => {
+  if (!profile) {
+    return ENDPOINTS.dashboard.data;
+  }
+  return `${ENDPOINTS.dashboard.data}?profile=${encodeURIComponent(profile)}`;
+};
+
+/**
+ * Get profile endpoint URL
+ * @returns {string} Profile endpoint URL
+ */
+export const getProfileUrl = () => {
+  return ENDPOINTS.profile.get;
 };
