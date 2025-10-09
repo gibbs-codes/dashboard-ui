@@ -31,7 +31,7 @@ export const App = ({ displayType = 'tv' }) => {
 
   // Connect to WebSocket
   const { connected } = useWebSocket(
-    process.env.REACT_APP_WS_URL || 'ws://localhost:3000/ws',
+    import.meta.env.VITE_WS_URL || 'ws://localhost:3001',
     true // auto-connect
   );
 
