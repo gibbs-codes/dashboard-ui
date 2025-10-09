@@ -50,8 +50,6 @@ export const useDashboardData = (profile = 'default') => {
    * @param {Object} newData - New dashboard data
    */
   const updateData = useCallback((newData) => {
-    console.log('[DEBUG] updateData called with:', { hasData: !!newData, isMounted: isMounted.current });
-
     if (!isMounted.current) return;
 
     if (newData && typeof newData === 'object') {
@@ -65,17 +63,7 @@ export const useDashboardData = (profile = 'default') => {
       // Save as last valid data for fallback
       saveLastData(newData);
 
-      if (isDevelopment) {
-        console.log('[useDashboardData] Data updated:', {
-          mode: newData.mode,
-          timestamp: newData.timestamp,
-          hasWeather: !!newData.weather,
-          hasTransit: !!newData.transit,
-          hasEvents: !!newData.events,
-          hasTasks: !!newData.tasks,
-          hasNextEvent: !!newData.nextEvent,
-        });
-      }
+      console.log('[Data] Updated successfully');
     }
   }, []);
 
@@ -84,21 +72,13 @@ export const useDashboardData = (profile = 'default') => {
    * @param {boolean} useCache - Whether to return cached data first
    */
   const fetchData = useCallback(async (useCache = true) => {
-    if (isDevelopment) {
-      console.log(`[useDashboardData] Fetching data for profile: ${profileRef.current}`);
-    }
-
     // Return cached data immediately if available
     if (useCache) {
       const cached = getFromCache(CACHE_KEYS.DASHBOARD_DATA);
 
       if (cached) {
-        if (isDevelopment) {
-          console.log('[useDashboardData] Using cached data');
-        }
         updateData(cached);
         setLoading(false);
-        console.log('[DEBUG] Loading set to false');
       }
     }
 
@@ -108,26 +88,26 @@ export const useDashboardData = (profile = 'default') => {
 
       if (!isMounted.current) return;
 
-      if (response.success && response.data) {
-        updateData(response.data);
+      console.log('[API] Response structure:', { hasSuccess: 'success' in response, hasData: !!response?.data });
+
+      if (response && (response.success || response.data)) {
+        // Handle both {success: true, data: {...}} and direct data responses
+        const actualData = response.data || response;
+        updateData(actualData);
         setLoading(false);
-        console.log('[DEBUG] Loading set to false');
       } else {
-        throw new Error(response.error || 'Failed to fetch dashboard data');
+        throw new Error(response?.error || 'Failed to fetch dashboard data');
       }
     } catch (err) {
       if (!isMounted.current) return;
 
-      console.error('[useDashboardData] Error fetching data:', err);
+      console.error('[API] Fetch error:', err.message);
 
       // Try to use cached data as fallback
       const cached = getFromCache(CACHE_KEYS.DASHBOARD_DATA);
       const lastValid = getLastData();
 
       if (cached || lastValid) {
-        if (isDevelopment) {
-          console.log('[useDashboardData] Using fallback data due to error');
-        }
         updateData(cached || lastValid);
         setError('Using cached data - server unavailable');
       } else {
@@ -135,7 +115,6 @@ export const useDashboardData = (profile = 'default') => {
       }
 
       setLoading(false);
-      console.log('[DEBUG] Loading set to false');
     }
   }, [updateData]);
 
@@ -144,10 +123,6 @@ export const useDashboardData = (profile = 'default') => {
    * Clears cache and fetches fresh data
    */
   const refresh = useCallback(async () => {
-    if (isDevelopment) {
-      console.log('[useDashboardData] Manual refresh triggered');
-    }
-
     setLoading(true);
     setError(null);
 
@@ -156,18 +131,12 @@ export const useDashboardData = (profile = 'default') => {
 
     try {
       // Call API refresh endpoint first
-      const refreshResponse = await refreshDashboardAPI();
-
-      if (refreshResponse.success) {
-        if (isDevelopment) {
-          console.log('[useDashboardData] Refresh triggered on server');
-        }
-      }
+      await refreshDashboardAPI();
 
       // Then fetch updated data
       await fetchData(false);
     } catch (err) {
-      console.error('[useDashboardData] Error during refresh:', err);
+      console.error('[Refresh] Error:', err.message);
 
       // Still try to fetch data even if refresh call failed
       await fetchData(false);
@@ -180,15 +149,8 @@ export const useDashboardData = (profile = 'default') => {
   const startPolling = useCallback(() => {
     if (pollingTimer.current) return;
 
-    if (isDevelopment) {
-      console.log(`[useDashboardData] Starting polling (interval: ${POLLING_INTERVAL}ms)`);
-    }
-
     pollingTimer.current = setInterval(() => {
       if (isMounted.current && wsClient.getState() !== WS_STATES.CONNECTED) {
-        if (isDevelopment) {
-          console.log('[useDashboardData] Polling for data update');
-        }
         fetchData(true);
       }
     }, POLLING_INTERVAL);
@@ -199,10 +161,6 @@ export const useDashboardData = (profile = 'default') => {
    */
   const stopPolling = useCallback(() => {
     if (pollingTimer.current) {
-      if (isDevelopment) {
-        console.log('[useDashboardData] Stopping polling');
-      }
-
       clearInterval(pollingTimer.current);
       pollingTimer.current = null;
     }
@@ -212,11 +170,7 @@ export const useDashboardData = (profile = 'default') => {
    * Handle WebSocket dashboard update events
    */
   const handleDashboardUpdate = useCallback((incomingData) => {
-    console.log('[DEBUG] Raw incoming WebSocket data:', JSON.stringify(incomingData, null, 2));
-
-    if (isDevelopment) {
-      console.log('[useDashboardData] Received dashboard update via WebSocket');
-    }
+    console.log('[WebSocket] Dashboard update received');
 
     if (incomingData) {
       // If we receive a partial update, merge with existing data
@@ -229,7 +183,6 @@ export const useDashboardData = (profile = 'default') => {
       } else {
         // Full update
         updateData(incomingData);
-        console.log('[DEBUG] After updateData call in handleDashboardUpdate');
       }
     }
   }, [updateData]);
@@ -239,10 +192,6 @@ export const useDashboardData = (profile = 'default') => {
    */
   const handleStateChange = useCallback((stateData) => {
     const { newState } = stateData;
-
-    if (isDevelopment) {
-      console.log(`[useDashboardData] WebSocket state changed to: ${newState}`);
-    }
 
     if (newState === WS_STATES.CONNECTED) {
       // WebSocket connected, stop polling

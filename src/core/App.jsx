@@ -3,7 +3,7 @@
  * Root application component for dashboard displays
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDashboardData } from '../hooks/useDashboardData';
 import { useProfile } from '../hooks/useProfile';
 import { useWebSocket } from '../hooks/useWebSocket';
@@ -20,14 +20,16 @@ import ProjectorDisplay from '../displays/ProjectorDisplay';
  * @returns {JSX.Element}
  */
 export const App = ({ displayType = 'tv' }) => {
+  const [forceRender, setForceRender] = useState(false);
+
   // Get display configuration
   const displayConfig = getDisplayConfig(displayType);
 
   // Get current profile
-  const { currentProfile } = useProfile(displayConfig.defaultProfile, displayType);
+  const { currentProfile, isLoading: profileLoading } = useProfile(displayConfig.defaultProfile, displayType);
 
   // Fetch dashboard data
-  const { data, loading, lastUpdated } = useDashboardData(currentProfile);
+  const { data, loading: dataLoading, lastUpdated } = useDashboardData(currentProfile);
 
   // Connect to WebSocket
   const { connected } = useWebSocket(
@@ -35,19 +37,25 @@ export const App = ({ displayType = 'tv' }) => {
     true // auto-connect
   );
 
-  // Log display initialization
+  // Timeout fallback: force render after 5 seconds
   useEffect(() => {
-    console.log(`[App] Initializing ${displayType} display with profile: ${currentProfile}`);
-  }, [displayType, currentProfile]);
+    const timeout = setTimeout(() => {
+      if (!data && (dataLoading || profileLoading)) {
+        console.log('[App] TIMEOUT: Forcing render. Data:', !!data, 'Loading:', dataLoading, profileLoading);
+        setForceRender(true);
+      }
+    }, 5000);
 
-  // Debug logging
-  useEffect(() => {
-    console.log('[App] DEBUG:', { data, loading, currentProfile, lastUpdated });
-  }, [data, loading, currentProfile, lastUpdated]);
+    return () => clearTimeout(timeout);
+  }, [data, dataLoading, profileLoading]);
 
-  // Loading state: show black screen
-  if (!data || loading) {
-    console.log('[App] Showing loading screen:', { hasData: !!data, loading });
+  // Show loading only if both conditions are true:
+  // 1. No data available yet
+  // 2. Either profile or data is still loading
+  // 3. Haven't hit the timeout fallback
+  const shouldShowLoading = !data && (dataLoading || profileLoading) && !forceRender;
+
+  if (shouldShowLoading) {
     return <div className="h-screen w-screen bg-black" />;
   }
 
