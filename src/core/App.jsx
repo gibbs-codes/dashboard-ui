@@ -40,8 +40,14 @@ export const App = ({ displayType = 'tv' }) => {
     console.log(`[App] Initializing ${displayType} display with profile: ${currentProfile}`);
   }, [displayType, currentProfile]);
 
+  // Debug logging
+  useEffect(() => {
+    console.log('[App] DEBUG:', { data, loading, currentProfile, lastUpdated });
+  }, [data, loading, currentProfile, lastUpdated]);
+
   // Loading state: show black screen
   if (!data || loading) {
+    console.log('[App] Showing loading screen:', { hasData: !!data, loading });
     return <div className="h-screen w-screen bg-black" />;
   }
 

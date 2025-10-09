@@ -206,22 +206,22 @@ export const useDashboardData = (profile = 'default') => {
   /**
    * Handle WebSocket dashboard update events
    */
-  const handleDashboardUpdate = useCallback((updateData) => {
+  const handleDashboardUpdate = useCallback((incomingData) => {
     if (isDevelopment) {
       console.log('[useDashboardData] Received dashboard update via WebSocket');
     }
 
-    if (updateData) {
+    if (incomingData) {
       // If we receive a partial update, merge with existing data
-      if (updateData.partial) {
+      if (incomingData.partial) {
         setData(prevData => ({
           ...prevData,
-          ...updateData,
-          timestamp: updateData.timestamp || new Date().toISOString(),
+          ...incomingData,
+          timestamp: incomingData.timestamp || new Date().toISOString(),
         }));
       } else {
         // Full update
-        updateData(updateData);
+        updateData(incomingData);
       }
     }
   }, [updateData]);
