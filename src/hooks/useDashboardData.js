@@ -98,6 +98,7 @@ export const useDashboardData = (profile = 'default') => {
       } else {
         throw new Error(response?.error || 'Failed to fetch dashboard data');
       }
+      setLoading(false);
     } catch (err) {
       if (!isMounted.current) return;
 
