@@ -50,8 +50,9 @@ export const apiClient = {
    * @returns {Promise<any>} Response data
    */
   async get(endpoint, params = {}) {
-    const url = new URL(`${API_BASE_URL}${endpoint}`);
-
+    console.log('API GET called with endpoint:', endpoint, 'and params:', params);
+    const url = new URL(`http://localhost:3001${endpoint}`);
+    console.log('GET URL:', url.toString());
     // Add query parameters
     Object.keys(params).forEach(key => {
       if (params[key] !== undefined && params[key] !== null) {
@@ -277,7 +278,7 @@ export const refreshDashboard = async () => {
  */
 export const getProfile = async () => {
   return wrapApiCall(async () => {
-    return await apiClient.get(ENDPOINTS.profile);
+    return await apiClient.get(ENDPOINTS.profile.get); // ✅ Correct - this is a string
   });
 };
 
@@ -288,7 +289,7 @@ export const getProfile = async () => {
  */
 export const setProfile = async (profile) => {
   return wrapApiCall(async () => {
-    return await apiClient.post(ENDPOINTS.profile, { profile });
+    return await apiClient.post(ENDPOINTS.profile.set, { profile });
   });
 };
 

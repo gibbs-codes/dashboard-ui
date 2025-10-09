@@ -50,6 +50,8 @@ export const useDashboardData = (profile = 'default') => {
    * @param {Object} newData - New dashboard data
    */
   const updateData = useCallback((newData) => {
+    console.log('[DEBUG] updateData called with:', { hasData: !!newData, isMounted: isMounted.current });
+
     if (!isMounted.current) return;
 
     if (newData && typeof newData === 'object') {
@@ -96,6 +98,7 @@ export const useDashboardData = (profile = 'default') => {
         }
         updateData(cached);
         setLoading(false);
+        console.log('[DEBUG] Loading set to false');
       }
     }
 
@@ -108,6 +111,7 @@ export const useDashboardData = (profile = 'default') => {
       if (response.success && response.data) {
         updateData(response.data);
         setLoading(false);
+        console.log('[DEBUG] Loading set to false');
       } else {
         throw new Error(response.error || 'Failed to fetch dashboard data');
       }
@@ -131,6 +135,7 @@ export const useDashboardData = (profile = 'default') => {
       }
 
       setLoading(false);
+      console.log('[DEBUG] Loading set to false');
     }
   }, [updateData]);
 
@@ -207,6 +212,8 @@ export const useDashboardData = (profile = 'default') => {
    * Handle WebSocket dashboard update events
    */
   const handleDashboardUpdate = useCallback((incomingData) => {
+    console.log('[DEBUG] Raw incoming WebSocket data:', JSON.stringify(incomingData, null, 2));
+
     if (isDevelopment) {
       console.log('[useDashboardData] Received dashboard update via WebSocket');
     }
@@ -222,6 +229,7 @@ export const useDashboardData = (profile = 'default') => {
       } else {
         // Full update
         updateData(incomingData);
+        console.log('[DEBUG] After updateData call in handleDashboardUpdate');
       }
     }
   }, [updateData]);
