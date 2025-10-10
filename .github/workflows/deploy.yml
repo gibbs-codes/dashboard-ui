@@ -84,6 +84,7 @@ jobs:
         
         # Build the image
         docker build --no-cache \
+          --file dockerfile \
           --label app=dashboard-ui \
           --label component=frontend \
           -t dashboard-ui:latest .
