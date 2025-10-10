@@ -133,6 +133,32 @@ export const PROFILES = {
       },
     },
   },
+
+  /**
+   * Gallery Profile
+   * Fullpage art with weather and time (matches backend mode: "gallery")
+   */
+  gallery: {
+    id: 'gallery',
+    name: 'Gallery Mode',
+    description: 'Fullpage art display with weather and time',
+    data: {
+      weather: true,
+      transit: false,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+      artwork: true,
+    },
+    displays: {
+      tv: 'TVArt',
+      projector: {
+        left: 'ArtCanvas',
+        center: 'ArtCanvas',
+        right: 'ArtCanvas',
+      },
+    },
+  },
 };
 
 /**
