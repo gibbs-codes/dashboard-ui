@@ -169,19 +169,6 @@ export const TransitCanvas = ({
       role="region"
       aria-label="Transit arrivals"
     >
-      {/* Bus 77 Section */}
-      {buses && (
-        <TransitSection
-          title="Bus 77"
-          icon={Bus}
-          lineColor="text-blue-400"
-          directions={[
-            { direction: 'East', arrivals: buses.east },
-            { direction: 'West', arrivals: buses.west },
-          ]}
-        />
-      )}
-
       {/* Red Line Section */}
       {red && (
         <TransitSection
@@ -206,6 +193,19 @@ export const TransitCanvas = ({
             { direction: 'South', arrivals: brown.south },
           ]}
           lastSection
+        />
+      )}
+      
+      {/* Bus 77 Section */}
+      {buses && (
+        <TransitSection
+          title="Bus 77"
+          icon={Bus}
+          lineColor="text-blue-400"
+          directions={[
+            { direction: 'East', arrivals: buses.east },
+            { direction: 'West', arrivals: buses.west },
+          ]}
         />
       )}
 
