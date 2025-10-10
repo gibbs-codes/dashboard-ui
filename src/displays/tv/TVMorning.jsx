@@ -14,7 +14,7 @@ import { Calendar, CheckCircle, CloudSun, Clock, Bus, Train } from 'lucide-react
  */
 const StatCard = ({ icon: Icon, value, label, iconColor = 'text-blue-400' }) => {
   return (
-    <div className="flex-1 bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-2xl">
+    <div className="flex-1 tv-glass-card rounded-lg p-6 shadow-2xl">
       <div className="flex items-center gap-4">
         <Icon className={`w-10 h-10 ${iconColor}`} strokeWidth={1.5} />
         <div>
@@ -329,7 +329,7 @@ export const TVMorning = ({ data = {} }) => {
       {/* Main: Events and Tasks */}
       <div className="grid grid-cols-2 gap-6 flex-1 mb-8">
         {/* Events */}
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-2xl overflow-y-auto">
+        <div className="tv-glass-card rounded-lg p-6 shadow-2xl overflow-y-auto">
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
             <Calendar className="w-7 h-7 text-blue-400" strokeWidth={1.5} />
             Upcoming Events
@@ -338,7 +338,7 @@ export const TVMorning = ({ data = {} }) => {
         </div>
 
         {/* Tasks */}
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-2xl overflow-y-auto">
+        <div className="tv-glass-card rounded-lg p-6 shadow-2xl overflow-y-auto">
           <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
             <CheckCircle className="w-7 h-7 text-green-400" strokeWidth={1.5} />
             Priority Tasks
@@ -348,7 +348,7 @@ export const TVMorning = ({ data = {} }) => {
       </div>
 
       {/* Bottom: Transit */}
-      <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 shadow-2xl">
+      <div className="tv-glass-card rounded-lg p-4 shadow-2xl">
         <TransitStrip data={transit} />
       </div>
     </div>

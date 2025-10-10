@@ -224,3 +224,135 @@ body.projector-bright-room {
 body.projector-dark-room {
   filter: contrast(1.1) brightness(0.95);
 }
+
+
+/* =================================================================
+   PROJECTOR FIXED CANVAS SYSTEM
+   Three immovable canvases matching original ProjectorUI layout
+   ================================================================= */
+
+/* Base canvas styling - applies to all three canvases */
+.projector-canvas {
+  position: fixed;
+  /* background-color: #000000; */
+  background-color: #ee0505;
+  overflow: hidden;
+  
+  /* Ensure canvases stay in place */
+  pointer-events: auto;
+  
+  /* Optional: Add subtle border for development/debugging */
+  /* border: 1px solid rgba(255, 255, 255, 0.1); */
+}
+
+/* Individual canvas positions - EXACT pixel measurements from original */
+.projector-canvas-left {
+  position: 'fixed';
+  left: 0px;
+  top: 74px;
+  width: 415px;
+  height: 1030px;
+  z-index: 10;
+}
+
+.projector-canvas-center {
+  z-index: 10;
+  position: 'fixed';
+  left: 583px;
+  top: 235px;
+  width: 540px;
+  height: 803px;
+}
+
+.projector-canvas-right {
+  z-index: 10;
+  position: 'fixed';
+  right: 41px;
+  top: 61px;
+  width: 814px;
+  height: 540px;
+}
+
+/* Development helper - uncomment to see canvas boundaries */
+/*
+.projector-canvas-left {
+  border: 2px solid rgba(255, 0, 0, 0.5);
+}
+
+.projector-canvas-center {
+  border: 2px solid rgba(0, 255, 0, 0.5);
+}
+
+.projector-canvas-right {
+  border: 2px solid rgba(0, 0, 255, 0.5);
+}
+*/
+
+/* Canvas content wrapper - ensures content stays within bounds */
+.projector-canvas > * {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Ensure viewport container doesn't interfere */
+.projector-viewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Connection indicator positioning - keep it above canvases */
+.projector-viewport .connection-indicator {
+  z-index: 100;
+}
+
+/* =================================================================
+   CANVAS OVERLAP HANDLING
+   
+   Note: The original ProjectorUI had these canvas positions which
+   DO NOT overlap. If you change positions and they do overlap,
+   adjust z-index values accordingly.
+   ================================================================= */
+
+/* Optional: Add drop shadows for depth perception */
+.projector-canvas-left,
+.projector-canvas-center,
+.projector-canvas-right {
+  /* Uncomment for subtle 3D effect */
+  /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); */
+}
+
+/* =================================================================
+   RESPONSIVE ADJUSTMENTS
+   
+   IMPORTANT: These measurements assume 0.6x scale transform on body
+   If you change the scale, recalculate all positions proportionally
+   ================================================================= */
+
+/* Scale verification helper - logs effective dimensions */
+@media screen {
+  body::before {
+    /* Debug helper - remove in production */
+    /* content: "Effective viewport: " attr(data-effective-width) " x " attr(data-effective-height); */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    display: none; /* Set to block for debugging */
+  }
+}
+
+/* =================================================================
+   CANVAS CONTENT GUIDELINES
+   
+   Components rendered inside canvases should:
+   1. Use relative positioning for internal layout
+   2. Respect the canvas dimensions (don't overflow)
+   3. Use the full canvas space (100% width/height)
+   4. Account for no padding/margin on canvas itself
+   ================================================================= */

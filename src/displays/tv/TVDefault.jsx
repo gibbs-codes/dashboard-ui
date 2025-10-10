@@ -159,7 +159,7 @@ export const TVDefault = ({ data = {} }) => {
       {/* 2x2 Grid */}
       <div className="grid grid-cols-2 grid-rows-2 gap-6 h-full">
         {/* Top Left: Weather */}
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-2xl">
+        <div className="tv-glass-card rounded-lg p-6 shadow-2xl">
           {weather ? (
             <Weather data={weather} className="h-full" />
           ) : (
@@ -170,7 +170,7 @@ export const TVDefault = ({ data = {} }) => {
         </div>
 
         {/* Top Right: Next Event */}
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-2xl">
+        <div className="tv-glass-card rounded-lg p-6 shadow-2xl">
           {nextEvent ? (
             <div className="h-full flex items-center">
               <NextEvent event={nextEvent} className="w-full" />
@@ -183,12 +183,12 @@ export const TVDefault = ({ data = {} }) => {
         </div>
 
         {/* Bottom Left: Transit */}
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-2xl">
+        <div className="tv-glass-card rounded-lg p-6 shadow-2xl">
           <TransitCard data={transit} />
         </div>
 
         {/* Bottom Right: Clock + Date */}
-        <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-2xl">
+        <div className="tv-glass-card rounded-lg p-6 shadow-2xl">
           <ClockDateCard />
         </div>
       </div>

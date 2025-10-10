@@ -1,31 +1,46 @@
-/* TV Display Specific Styles */
-/* Optimized for 1920x1080 resolution */
+/* TV Display Enhanced Styles - ProjectorUIv2 Aesthetic */
+/* Place this in: src/styles/tv.css */
 
 :root {
-  /* Normal viewport settings for TV */
   --tv-scale: 1;
   --tv-width: 1920px;
   --tv-height: 1080px;
 }
 
 html {
-  /* Ensure crisp rendering on TV displays */
   image-rendering: crisp-edges;
   image-rendering: -webkit-optimize-contrast;
 }
 
 body {
-  /* Prevent overscroll on TV displays */
   overscroll-behavior: none;
-
-  /* Optimize for TV viewing distance */
   font-size: 16px;
-
-  /* TV-safe area (accounting for overscan) */
   padding: env(safe-area-inset-top, 20px)
            env(safe-area-inset-right, 20px)
            env(safe-area-inset-bottom, 20px)
            env(safe-area-inset-left, 20px);
+}
+
+/* Enhanced Glass-Morphism Cards */
+.tv-glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.37),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.tv-glass-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px 0 rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
 }
 
 /* TV Display Container */
@@ -36,16 +51,15 @@ body {
   color: var(--tv-text-primary);
 }
 
-/* Optimized text rendering for TV */
+/* Optimized text rendering */
 .tv-text-optimized {
-  /* Slightly bolder text for better readability on TV */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-weight: 500;
   letter-spacing: 0.025em;
 }
 
-/* TV-specific animations - smoother for lower refresh rates */
+/* Smooth animations */
 @media (prefers-reduced-motion: no-preference) {
   .tv-animate {
     transition-duration: 300ms;
@@ -53,15 +67,13 @@ body {
   }
 }
 
-/* Prevent text selection on TV interface */
+/* Prevent text selection */
 .tv-no-select {
   user-select: none;
   -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
 
-/* TV-optimized focus states for remote control navigation */
+/* Focus states for remote control */
 .tv-focusable:focus,
 .tv-focusable:focus-visible {
   outline: 4px solid var(--tv-accent-primary);
@@ -69,31 +81,26 @@ body {
   box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2);
 }
 
-/* TV grid layout optimizations */
+/* Grid layout */
 .tv-grid {
   display: grid;
   gap: 2rem;
   padding: 2rem;
 }
 
-/* Ensure proper aspect ratio for TV content */
-.tv-aspect-16-9 {
-  aspect-ratio: 16 / 9;
-}
-
-/* TV-safe typography */
+/* Typography */
 .tv-heading-primary {
   font-size: clamp(2rem, 4vw, 4rem);
   font-weight: 700;
   line-height: 1.2;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .tv-heading-secondary {
   font-size: clamp(1.5rem, 3vw, 3rem);
   font-weight: 600;
   line-height: 1.3;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .tv-body-text {
@@ -101,7 +108,7 @@ body {
   line-height: 1.6;
 }
 
-/* Prevent HDMI overscan issues */
+/* Prevent HDMI overscan */
 @media screen and (min-width: 1920px) {
   body {
     max-width: 1880px;
@@ -110,7 +117,7 @@ body {
   }
 }
 
-/* TV power-saving mode - reduce brightness after inactivity */
+/* Power-saving dim mode */
 body.tv-dim-mode {
   filter: brightness(0.7);
   transition: filter 1s ease-in-out;
@@ -119,4 +126,76 @@ body.tv-dim-mode {
 body.tv-dim-mode:hover,
 body.tv-dim-mode:focus-within {
   filter: brightness(1);
+}
+
+/* Status indicators with glow */
+.tv-status-indicator {
+  position: relative;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tv-status-success {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+}
+
+.tv-status-warning {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+}
+
+.tv-status-error {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+/* Enhanced card inner glow */
+.tv-card-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.tv-card-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+}
+
+/* Gradient overlays for depth */
+.tv-gradient-overlay {
+  position: relative;
+}
+
+.tv-gradient-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  pointer-events: none;
+  border-radius: inherit;
 }

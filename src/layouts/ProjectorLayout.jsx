@@ -1,6 +1,6 @@
 /**
- * ProjectorLayout Component
- * Main layout wrapper for projector display with 3-column grid
+ * ProjectorLayout Component - Fixed Canvas System
+ * Three immovable positioned canvases matching original ProjectorUI repo
  */
 
 import React from 'react';
@@ -10,6 +10,8 @@ import { TransitCanvas } from '../components/projector/TransitCanvas';
 import { ClockWeatherCanvas } from '../components/projector/ClockWeatherCanvas';
 import { ArtCanvas } from '../components/projector/ArtCanvas';
 import { CalendarTimelineCanvas } from '../components/projector/CalendarTimelineCanvas';
+import { CanvasDebugOverlay } from '../components/debug/CanvasDebugOverlay';
+import { CanvasPositionAdjuster } from '../components/debug/CanvasPositionAdjuster';
 
 /**
  * Component mapping
@@ -24,9 +26,6 @@ const COMPONENT_MAP = {
 
 /**
  * Get component props based on component name and data
- * @param {string} componentName - Name of component
- * @param {Object} data - Dashboard data
- * @returns {Object} Props for component
  */
 const getComponentProps = (componentName, data) => {
   switch (componentName) {
@@ -44,18 +43,23 @@ const getComponentProps = (componentName, data) => {
 };
 
 /**
- * Column Component
- * Renders a single column with dynamic component
+ * Canvas Component
+ * Renders a single fixed-position canvas with dynamic content
  */
-const Column = ({ componentName, data, position }) => {
+const Canvas = ({ componentName, data, position, style, className = '' }) => {
   const Component = COMPONENT_MAP[componentName];
 
   if (!Component) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-gray-600 text-lg">
-          Unknown component: {componentName}
-        </p>
+      <div 
+        className={`projector-canvas ${className}`}
+        style={style}
+      >
+        <div className="flex items-center justify-center h-full">
+          <p className="text-gray-600 text-lg">
+            Unknown component: {componentName}
+          </p>
+        </div>
       </div>
     );
   }
@@ -63,11 +67,10 @@ const Column = ({ componentName, data, position }) => {
   const props = getComponentProps(componentName, data);
 
   return (
-    <div
-      className={`
-        h-full
-        ${position === 'center' ? 'border-x border-gray-800' : ''}
-      `}
+    <div 
+      className={`projector-canvas ${className}`}
+      style={style}
+      data-canvas={position}
     >
       <Component {...props} />
     </div>
@@ -76,14 +79,7 @@ const Column = ({ componentName, data, position }) => {
 
 /**
  * ProjectorLayout Component
- * Main layout wrapper for projector display
- *
- * @param {Object} props
- * @param {string} props.profile - Profile ID
- * @param {Object} props.data - Dashboard data
- * @param {boolean} props.wsConnected - WebSocket connection status
- * @param {Date|null} props.lastUpdated - Last data update timestamp
- * @returns {JSX.Element}
+ * Three fixed-position canvases matching original ProjectorUI dimensions
  */
 export const ProjectorLayout = ({
   profile = 'default',
@@ -95,52 +91,64 @@ export const ProjectorLayout = ({
   const profileConfig = PROFILES[profile] || PROFILES.default;
   const { projector } = profileConfig.displays;
 
-  // Extract column components
+  // Extract canvas components
   const leftComponent = projector?.left || 'Transit';
   const centerComponent = projector?.center || 'ClockWeather';
   const rightComponent = projector?.right || 'ArtCanvas';
 
+  // Original ProjectorUI canvas positions (pixel-perfect)
+const canvasPositions = {
+  left: {
+    position: 'fixed',
+    left: '0px',
+    top: '74px',
+    width: '415px',
+    height: '1030px',
+  },
+  center: {
+    position: 'fixed',
+    left: '583px',
+    top: '235px',
+    width: '540px',
+    height: '803px',
+  },
+  right: {
+    position: 'fixed',
+    right: '41px',
+    top: '61px',
+    width: '814px',
+    height: '540px',
+  },
+};
+
   return (
-    <div
-      className="
-        projector-viewport
-        w-screen
-        h-screen
-        bg-black
-        text-white
-        overflow-hidden
-      "
-    >
-      {/* 3-column grid layout */}
-      <div
-        className="
-          grid
-          grid-cols-[30%_40%_30%]
-          h-full
-          w-full
-        "
-      >
-        {/* Left column (30%) */}
-        <Column
-          componentName={leftComponent}
-          data={data}
-          position="left"
-        />
+    <div className="projector-viewport w-screen h-screen bg-black text-white overflow-hidden">
+      {/* Left Canvas - Transit */}
+      <Canvas
+        componentName={leftComponent}
+        data={data}
+        position="left"
+        style={canvasPositions.left}
+        className="projector-canvas-left"
+      />
 
-        {/* Center column (40%) */}
-        <Column
-          componentName={centerComponent}
-          data={data}
-          position="center"
-        />
+      {/* Center Canvas - Clock/Weather */}
+      <Canvas
+        componentName={centerComponent}
+        data={data}
+        position="center"
+        style={canvasPositions.center}
+        className="projector-canvas-center"
+      />
 
-        {/* Right column (30%) */}
-        <Column
-          componentName={rightComponent}
-          data={data}
-          position="right"
-        />
-      </div>
+      {/* Right Canvas - Art/Calendar */}
+      <Canvas
+        componentName={rightComponent}
+        data={data}
+        position="right"
+        style={canvasPositions.right}
+        className="projector-canvas-right"
+      />
 
       {/* Connection indicator (bottom-right) */}
       <ConnectionIndicator

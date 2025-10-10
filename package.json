@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "dev:tv": "vite --open /tv.html",
     "dev:projector": "vite --open /projector.html",
     "build": "vite build",

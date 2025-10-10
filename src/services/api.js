@@ -51,7 +51,7 @@ export const apiClient = {
    */
   async get(endpoint, params = {}) {
     console.log('API GET called with endpoint:', endpoint, 'and params:', params);
-    const url = new URL(`http://localhost:3001${endpoint}`);
+    const url = new URL(`${API_BASE_URL}${endpoint}`);
     console.log('GET URL:', url.toString());
     // Add query parameters
     Object.keys(params).forEach(key => {
