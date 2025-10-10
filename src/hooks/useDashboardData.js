@@ -35,6 +35,8 @@ const POLLING_INTERVAL = DEFAULT_POLLING_INTERVAL;
  * @returns {Object} Dashboard data state and methods
  */
 export const useDashboardData = (profile = 'default') => {
+  console.log('[useDashboardData] Hook called with profile:', profile);
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,9 +52,10 @@ export const useDashboardData = (profile = 'default') => {
    * @param {Object} newData - New dashboard data
    */
   const updateData = useCallback((newData) => {
-    if (!isMounted.current) return;
+    console.log('[updateData] Called with data:', newData);
 
     if (newData && typeof newData === 'object') {
+      console.log('[updateData] Validation passed, setting data');
       setData(newData);
       setLastUpdated(new Date());
       setError(null);
@@ -64,6 +67,8 @@ export const useDashboardData = (profile = 'default') => {
       saveLastData(newData);
 
       console.log('[Data] Updated successfully');
+    } else {
+      console.warn('[updateData] Validation failed:', { hasData: !!newData, type: typeof newData });
     }
   }, []);
 
@@ -84,24 +89,26 @@ export const useDashboardData = (profile = 'default') => {
 
     try {
       // Fetch fresh data from API
+      console.log('[fetchData] Calling getDashboardData with profile:', profileRef.current);
       const response = await getDashboardData(profileRef.current);
+      console.log('[fetchData] Got response:', response);
+      console.log('[fetchData] VERSION 2 - FIXED UNMOUNT BUG');
 
-      if (!isMounted.current) return;
-
-      console.log('[API] Response structure:', { hasSuccess: 'success' in response, hasData: !!response?.data });
+      // Note: Removed isMounted check here - React handles state updates on unmounted components
+      // This allows StrictMode double-mounting to work correctly
 
       if (response && (response.success || response.data)) {
         // Handle both {success: true, data: {...}} and direct data responses
         const actualData = response.data || response;
+        console.log('[fetchData] Calling updateData with:', actualData);
         updateData(actualData);
         setLoading(false);
       } else {
+        console.error('[fetchData] Invalid response:', response);
         throw new Error(response?.error || 'Failed to fetch dashboard data');
       }
       setLoading(false);
     } catch (err) {
-      if (!isMounted.current) return;
-
       console.error('[API] Fetch error:', err.message);
 
       // Try to use cached data as fallback
@@ -142,7 +149,8 @@ export const useDashboardData = (profile = 'default') => {
       // Still try to fetch data even if refresh call failed
       await fetchData(false);
     }
-  }, [fetchData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /**
    * Start polling (fallback when WebSocket is disconnected)
@@ -155,7 +163,8 @@ export const useDashboardData = (profile = 'default') => {
         fetchData(true);
       }
     }, POLLING_INTERVAL);
-  }, [fetchData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /**
    * Stop polling
@@ -204,15 +213,20 @@ export const useDashboardData = (profile = 'default') => {
       // WebSocket disconnected, start polling
       startPolling();
     }
-  }, [stopPolling, startPolling, fetchData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stopPolling, startPolling]);
 
   /**
    * Initial data fetch on mount or profile change
    */
   useEffect(() => {
+    console.log('[useDashboardData] Effect running, profile:', profile);
     profileRef.current = profile;
+    console.log('[useDashboardData] About to call fetchData');
     fetchData(true);
-  }, [profile, fetchData]);
+    console.log('[useDashboardData] Called fetchData');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile]);
 
   /**
    * Subscribe to WebSocket events
@@ -235,10 +249,16 @@ export const useDashboardData = (profile = 'default') => {
 
   /**
    * Cleanup on unmount
+   * Note: We don't set isMounted to false here because in React StrictMode,
+   * components mount/unmount twice, which would cause the isMounted check
+   * to abort valid API calls. React handles cleanup of state updates automatically.
    */
   useEffect(() => {
+    // Set mounted on mount
+    isMounted.current = true;
+
     return () => {
-      isMounted.current = false;
+      // Only clean up polling, let React handle state updates
       stopPolling();
     };
   }, [stopPolling]);

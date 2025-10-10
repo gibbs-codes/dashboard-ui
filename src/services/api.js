@@ -230,6 +230,14 @@ export const apiClient = {
 const wrapApiCall = async (apiCall) => {
   try {
     const data = await apiCall();
+
+    // If the API already returns a wrapped response, return it as-is
+    // (Backend returns {success: true, data: {...}} already)
+    if (data && typeof data === 'object' && 'success' in data) {
+      return data;
+    }
+
+    // Otherwise, wrap it
     return {
       success: true,
       data,

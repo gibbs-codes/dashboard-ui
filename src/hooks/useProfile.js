@@ -97,10 +97,11 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
       // Then fetch from API to ensure sync
       const response = await getProfileFromAPI();
 
-      if (response.success && response.data?.profile) {
-        const apiProfile = response.data.profile;
+      if (response.success && response.data) {
+        // API returns data.mode as the profile ID
+        const apiProfile = response.data.mode || response.data.profile;
 
-        if (isProfileSupported(apiProfile)) {
+        if (apiProfile && isProfileSupported(apiProfile)) {
           updateProfileState(apiProfile);
           saveProfile(apiProfile);
         } else {
