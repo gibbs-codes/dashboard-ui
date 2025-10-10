@@ -7,13 +7,13 @@ const LINE_CONFIG = {
   red: {
     label: 'Red Line',
     short: 'RED',
-    primary: '#ef4444',
+    primary: '#b90000ff',
     badgeClass: 'bg-red-600/10 text-red-300',
   },
   brown: {
     label: 'Brown Line',
     short: 'BRN',
-    primary: '#f59e0b',
+    primary: '#694200ff',
     badgeClass: 'bg-amber-600/10 text-amber-200',
   },
   default: {
