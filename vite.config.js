@@ -8,8 +8,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        tv: resolve(__dirname, 'public/tv.html'),
-        projector: resolve(__dirname, 'public/projector.html'),
+        tv: resolve(__dirname, 'tv.html'),
+        projector: resolve(__dirname, 'projector.html'),
       },
     },
   },

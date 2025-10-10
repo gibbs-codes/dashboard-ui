@@ -83,13 +83,18 @@ jobs:
         docker rm dashboard-ui-production 2>/dev/null || true
         
         # Build the image
-        docker build --no-cache -t dashboard-ui:latest .
+        docker build --no-cache \
+          --label app=dashboard-ui \
+          --label component=frontend \
+          -t dashboard-ui:latest .
         
         # Run the container with shared network
         docker run -d \
           --name dashboard-ui-production \
           --restart unless-stopped \
           --network gibbs-apps \
+          --label app=dashboard-ui \
+          --label component=frontend \
           -p 3000:3000 \
           --env-file .env \
           -e NODE_ENV=production \
@@ -105,8 +110,10 @@ jobs:
         docker ps | grep dashboard-ui-production
         
         echo "Testing health endpoint..."
-        if curl -f http://localhost:3000/; then
+        if curl -f http://localhost:3000/projector.html; then
           echo "✅ Projector UI deployment successful!"
+        elif curl -f http://localhost:3000/; then
+          echo "✅ Projector UI deployment responding on root path"
         else
           echo "❌ Health check failed"
           echo "Container logs:"

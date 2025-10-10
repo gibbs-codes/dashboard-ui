@@ -1,0 +1,11 @@
+.git
+.github
+node_modules
+.vite
+dist
+npm-debug.log
+yarn-error.log
+docker-compose.yml
+.env.local
+.env.development
+.env.test
