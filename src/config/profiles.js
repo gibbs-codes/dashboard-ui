@@ -153,9 +153,9 @@ export const PROFILES = {
     displays: {
       tv: 'TVArt',
       projector: {
-        left: 'ArtCanvas',
-        center: 'ArtCanvas',
-        right: 'ArtCanvas',
+        left: 'Transit',           // Transit data
+        center: 'ArtCanvas',    // Clock/Weather (CHANGE THIS)
+        right: 'ArtCanvas',         // Artwork
       },
     },
   },
