@@ -10,6 +10,9 @@ import { TransitCanvas } from '../components/projector/TransitCanvas';
 import { ClockWeatherCanvas } from '../components/projector/ClockWeatherCanvas';
 import { ArtCanvas } from '../components/projector/ArtCanvas';
 import { CalendarTimelineCanvas } from '../components/projector/CalendarTimelineCanvas';
+import { FloatingClock } from '../components/projector/FloatingClock';
+import { FloatingWeather } from '../components/projector/FloatingWeather';
+import { FloatingArtworkInfo } from '../components/projector/FloatingArtworkInfo';
 import { CanvasDebugOverlay } from '../components/debug/CanvasDebugOverlay';
 import { CanvasPositionAdjuster } from '../components/debug/CanvasPositionAdjuster';
 
@@ -25,9 +28,9 @@ const COMPONENT_MAP = {
 };
 
 /**
- * Get component props based on component name and data
+ * Get component props based on component name, data, and position
  */
-const getComponentProps = (componentName, data) => {
+const getComponentProps = (componentName, data, position) => {
   switch (componentName) {
     case 'Transit':
       return { data: data?.transit || null };
@@ -36,7 +39,11 @@ const getComponentProps = (componentName, data) => {
     case 'CalendarTimeline':
       return { events: data?.events || [] };
     case 'ArtCanvas':
-      return {}; // No data needed
+      // Determine which artwork based on canvas position
+      const artworkData = position === 'center'
+        ? data?.artworkCenter
+        : data?.artworkRight;
+      return { artwork: artworkData || null };
     default:
       return {};
   }
@@ -51,7 +58,7 @@ const Canvas = ({ componentName, data, position, style, className = '' }) => {
 
   if (!Component) {
     return (
-      <div 
+      <div
         className={`projector-canvas ${className}`}
         style={style}
       >
@@ -64,10 +71,10 @@ const Canvas = ({ componentName, data, position, style, className = '' }) => {
     );
   }
 
-  const props = getComponentProps(componentName, data);
+  const props = getComponentProps(componentName, data, position);
 
   return (
-    <div 
+    <div
       className={`projector-canvas ${className}`}
       style={style}
       data-canvas={position}
@@ -149,6 +156,36 @@ const canvasPositions = {
         style={canvasPositions.right}
         className="projector-canvas-right"
       />
+
+      {/* Floating Clock (top-center) */}
+      <FloatingClock />
+
+      {/* Floating Weather (below right canvas) */}
+      <FloatingWeather weatherData={data?.weather} />
+
+      {/* Artwork Info - Below Center Canvas */}
+      {centerComponent === 'ArtCanvas' && (
+        <FloatingArtworkInfo
+          artwork={data?.artworkCenter}
+          style={{
+            left: '583px',
+            top: '1028px', 
+            width: '540px',
+          }}
+        />
+      )}
+
+      {/* Artwork Info - Below Right Canvas */}
+      {rightComponent === 'ArtCanvas' && (
+        <FloatingArtworkInfo
+          artwork={data?.artworkRight}
+          style={{
+            right: '41px',
+            top: '601px', // 61px (right top) + 540px (right height) + 20px gap
+            width: '814px',
+          }}
+        />
+      )}
 
       {/* Connection indicator (bottom-right) */}
       <ConnectionIndicator

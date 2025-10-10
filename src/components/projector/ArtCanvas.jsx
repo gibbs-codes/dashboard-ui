@@ -193,25 +193,15 @@ const WavesArt = () => {
 };
 
 /**
- * ArtCanvas Component
- * Displays decorative animated art, cycling through styles
- *
- * @param {Object} props
- * @param {string} props.className - Additional CSS classes
- * @param {number} props.cycleInterval - Time in ms to cycle styles (default: 300000 = 5 min)
- * @returns {JSX.Element}
+ * Generative Art Fallback
+ * Shows cycling generative art patterns when no artwork is provided
  */
-export const ArtCanvas = ({
-  className = '',
-  cycleInterval = 300000 // 5 minutes
-}) => {
+const GenerativeArtFallback = ({ cycleInterval = 300000 }) => {
   const styles = Object.values(ART_STYLES);
   const [currentStyleIndex, setCurrentStyleIndex] = useState(() => {
-    // Random initial style
     return Math.floor(Math.random() * styles.length);
   });
 
-  // Cycle through styles
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentStyleIndex((prev) => (prev + 1) % styles.length);
@@ -222,7 +212,6 @@ export const ArtCanvas = ({
 
   const currentStyle = styles[currentStyleIndex];
 
-  // Render current art style
   const renderArt = () => {
     switch (currentStyle) {
       case ART_STYLES.GRADIENT:
@@ -239,20 +228,91 @@ export const ArtCanvas = ({
   };
 
   return (
+    <div className="h-full w-full transition-opacity duration-1000">
+      {renderArt()}
+    </div>
+  );
+};
+
+/**
+ * ArtCanvas Component
+ * Displays artwork from Art Institute of Chicago or decorative generative art
+ *
+ * @param {Object} props
+ * @param {Object} props.artwork - Artwork data { imageUrl, title, artist, date }
+ * @param {string} props.className - Additional CSS classes
+ * @param {number} props.cycleInterval - Time in ms to cycle generative art styles (default: 300000 = 5 min)
+ * @returns {JSX.Element}
+ */
+export const ArtCanvas = ({
+  artwork = null,
+  className = '',
+  cycleInterval = 300000 // 5 minutes
+}) => {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  // Reset states when artwork changes
+  useEffect(() => {
+    setImageLoaded(false);
+    setImageError(false);
+  }, [artwork?.imageUrl]);
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(false);
+  };
+
+  // Show generative art if no artwork or image failed to load
+  const showGenerativeArt = !artwork?.imageUrl || imageError;
+
+  return (
     <div
       className={`
         h-full
         w-full
         overflow-hidden
+        bg-black
         ${className}
       `}
       role="presentation"
-      aria-hidden="true"
+      aria-label={artwork?.title ? `Artwork: ${artwork.title}` : 'Decorative art display'}
     >
-      {/* Fade transition between styles */}
-      <div className="h-full w-full transition-opacity duration-1000">
-        {renderArt()}
-      </div>
+      {showGenerativeArt ? (
+        // Fallback to generative art
+        <GenerativeArtFallback cycleInterval={cycleInterval} />
+      ) : (
+        // Display artwork image
+        <div className="relative h-full w-full">
+          {/* Loading state - show generative art while loading */}
+          {!imageLoaded && (
+            <div className="absolute inset-0">
+              <GenerativeArtFallback cycleInterval={cycleInterval} />
+            </div>
+          )}
+
+          {/* Artwork image */}
+          <img
+            src={artwork.imageUrl}
+            alt={artwork.title || 'Artwork'}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            className={`
+              w-full
+              h-full
+              object-cover
+              transition-opacity
+              duration-1000
+              ${imageLoaded ? 'opacity-100' : 'opacity-0'}
+            `}
+          />
+        </div>
+      )}
     </div>
   );
 };

@@ -22,12 +22,13 @@ export const PROFILES = {
       calendar: false,
       tasks: false,
       nextEvent: false,
+      artwork: true,
     },
     displays: {
       tv: 'TVDefault',
       projector: {
         left: 'Transit',
-        center: 'ClockWeather',
+        center: 'ArtCanvas',
         right: 'ArtCanvas',
       },
     },
