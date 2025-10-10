@@ -7,13 +7,13 @@ const LINE_CONFIG = {
   red: {
     label: 'Red Line',
     short: 'RED',
-    primary: '#b90000ff',
+    primary: '#d60000ff',
     badgeClass: 'bg-red-600/10 text-red-300',
   },
   brown: {
     label: 'Brown Line',
     short: 'BRN',
-    primary: '#694200ff',
+    primary: '#ae6f01ff',
     badgeClass: 'bg-amber-600/10 text-amber-200',
   },
   default: {
@@ -130,7 +130,7 @@ const DirectionTrackVisual = ({ direction, arrivals }) => {
       </span>
       <div className="relative flex-[3] w-3 bg-zinc-900/80 border border-zinc-800 mt-6 mb-6 rounded-full overflow-visible">
         <div
-          className={`absolute inset-0 ${direction === 'north' ? 'right-0' : 'left-0'} w-[2px] bg-zinc-600`}
+          className={`absolute inset-0 ${direction === 'north' ? 'right-1' : 'left-2'} w-[2px] bg-zinc-600`}
         />
 
         {displayArrivals.length === 0 ? (
