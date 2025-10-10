@@ -176,8 +176,8 @@ export const TransitCanvas = ({
           icon={Train}
           lineColor="text-red-500"
           directions={[
-            { direction: 'North', arrivals: red.north },
-            { direction: 'South', arrivals: red.south },
+            { direction: 'North', arrivals: red.north.map(a => a.minutesAway) },
+            { direction: 'South', arrivals: red.south.map(a => a.minutesAway) },
           ]}
         />
       )}
@@ -189,8 +189,8 @@ export const TransitCanvas = ({
           icon={Train}
           lineColor="text-amber-600"
           directions={[
-            { direction: 'North', arrivals: brown.north },
-            { direction: 'South', arrivals: brown.south },
+            { direction: 'North', arrivals: brown.north.map(a => a.minutesAway) },
+            { direction: 'South', arrivals: brown.south.map(a => a.minutesAway) },
           ]}
           lastSection
         />
@@ -203,8 +203,8 @@ export const TransitCanvas = ({
           icon={Bus}
           lineColor="text-blue-400"
           directions={[
-            { direction: 'East', arrivals: buses.east },
-            { direction: 'West', arrivals: buses.west },
+            { direction: 'East', arrivals: buses.east.map(a => a.minutesAway) },
+            { direction: 'West', arrivals: buses.west.map(a => a.minutesAway) },
           ]}
         />
       )}
