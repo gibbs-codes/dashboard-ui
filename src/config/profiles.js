@@ -18,7 +18,7 @@ export const PROFILES = {
     description: 'Fullpage art display with weather and time',
     data: {
       weather: true,
-      transit: false,
+      transit: true,        // Make sure this is true
       calendar: false,
       tasks: false,
       nextEvent: false,
@@ -27,9 +27,9 @@ export const PROFILES = {
     displays: {
       tv: 'TVArt',
       projector: {
-        left: 'Transit',
-        center: 'ArtCanvas',
-        right: 'ArtCanvas',
+        left: 'Transit',           // Transit data
+        center: 'ArtCanvas',    // Clock/Weather (CHANGE THIS)
+        right: 'ArtCanvas',         // Artwork
       },
     },
   },
@@ -50,7 +50,7 @@ export const PROFILES = {
       nextEvent: true,
     },
     displays: {
-      tv: 'TVMorning',
+      tv: 'TVArt',
       projector: {
         left: 'WeatherTransit',
         center: 'ClockDate',
@@ -75,7 +75,7 @@ export const PROFILES = {
       nextEvent: true,
     },
     displays: {
-      tv: 'TVFocus',
+      tv: 'TVArt',
       projector: {
         left: 'ArtCanvas',
         center: 'NextEventLarge',
@@ -100,7 +100,7 @@ export const PROFILES = {
       nextEvent: true,
     },
     displays: {
-      tv: 'TVWork',
+      tv: 'TVArt',
       projector: {
         left: 'Calendar',
         center: 'NextEventClock',
@@ -125,7 +125,7 @@ export const PROFILES = {
       nextEvent: false,
     },
     displays: {
-      tv: 'TVRelax',
+      tv: 'TVArt',
       projector: {
         left: 'ArtCanvas',
         center: 'ClockOnly',
