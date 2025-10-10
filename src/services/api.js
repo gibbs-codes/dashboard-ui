@@ -3,7 +3,7 @@
  * Clean service layer using native fetch API for dashboard backend communication
  */
 
-import { API_BASE_URL, ENDPOINTS, REQUEST_CONFIG, STATUS_CODES } from '../config/api.js';
+import { API_BASE_URL, API_BASE_URLS, ENDPOINTS, REQUEST_CONFIG, STATUS_CODES } from '../config/api.js';
 
 /**
  * Check if running in development mode
@@ -38,6 +38,48 @@ const createTimeout = (ms) => {
   });
 };
 
+const isRetryableNetworkError = (error) => {
+  if (!error) return false;
+  if (error instanceof ApiError && error.status !== 0) {
+    return false;
+  }
+
+  const message = error.message || '';
+  return [
+    'Failed to fetch',
+    'NetworkError when attempting to fetch resource',
+    'Request timeout',
+    'Network error - cannot reach server',
+  ].some((snippet) => message.includes(snippet));
+};
+
+const performWithFallback = async (client, method, endpoint, executor) => {
+  let lastError = null;
+
+  for (let index = 0; index < API_BASE_URLS.length; index += 1) {
+    const baseUrl = API_BASE_URLS[index];
+
+    try {
+      return await executor(baseUrl, index);
+    } catch (error) {
+      const formattedError = client._handleError(error, method, endpoint);
+      lastError = formattedError;
+
+      const hasMoreHosts = index < API_BASE_URLS.length - 1;
+      if (hasMoreHosts && isRetryableNetworkError(formattedError)) {
+        if (isDevelopment) {
+          console.warn(`[API] ${method} ${endpoint} failed for ${baseUrl}. Trying fallback host ${API_BASE_URLS[index + 1]}`);
+        }
+        continue;
+      }
+
+      throw formattedError;
+    }
+  }
+
+  throw lastError ?? new ApiError('Network error - cannot reach server', 0);
+};
+
 /**
  * API Client
  * Provides HTTP methods with error handling and timeout support
@@ -51,32 +93,30 @@ export const apiClient = {
    */
   async get(endpoint, params = {}) {
     console.log('API GET called with endpoint:', endpoint, 'and params:', params);
-    const url = new URL(`${API_BASE_URL}${endpoint}`);
-    console.log('GET URL:', url.toString());
-    // Add query parameters
-    Object.keys(params).forEach(key => {
-      if (params[key] !== undefined && params[key] !== null) {
-        url.searchParams.append(key, params[key]);
-      }
-    });
+    return performWithFallback(this, 'GET', endpoint, async (baseUrl) => {
+      const url = new URL(`${baseUrl}${endpoint}`);
+      console.log('GET URL:', url.toString());
 
-    const fetchPromise = fetch(url.toString(), {
-      method: 'GET',
-      headers: {
-        ...REQUEST_CONFIG.headers,
-      },
-    });
+      Object.keys(params).forEach(key => {
+        if (params[key] !== undefined && params[key] !== null) {
+          url.searchParams.append(key, params[key]);
+        }
+      });
 
-    try {
+      const fetchPromise = fetch(url.toString(), {
+        method: 'GET',
+        headers: {
+          ...REQUEST_CONFIG.headers,
+        },
+      });
+
       const response = await Promise.race([
         fetchPromise,
         createTimeout(REQUEST_TIMEOUT),
       ]);
 
       return await this._handleResponse(response);
-    } catch (error) {
-      throw this._handleError(error, 'GET', endpoint);
-    }
+    });
   },
 
   /**
@@ -86,24 +126,22 @@ export const apiClient = {
    * @returns {Promise<any>} Response data
    */
   async post(endpoint, data = {}) {
-    const fetchPromise = fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'POST',
-      headers: {
-        ...REQUEST_CONFIG.headers,
-      },
-      body: JSON.stringify(data),
-    });
+    return performWithFallback(this, 'POST', endpoint, async (baseUrl) => {
+      const fetchPromise = fetch(`${baseUrl}${endpoint}`, {
+        method: 'POST',
+        headers: {
+          ...REQUEST_CONFIG.headers,
+        },
+        body: JSON.stringify(data),
+      });
 
-    try {
       const response = await Promise.race([
         fetchPromise,
         createTimeout(REQUEST_TIMEOUT),
       ]);
 
       return await this._handleResponse(response);
-    } catch (error) {
-      throw this._handleError(error, 'POST', endpoint);
-    }
+    });
   },
 
   /**
@@ -113,24 +151,22 @@ export const apiClient = {
    * @returns {Promise<any>} Response data
    */
   async put(endpoint, data = {}) {
-    const fetchPromise = fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'PUT',
-      headers: {
-        ...REQUEST_CONFIG.headers,
-      },
-      body: JSON.stringify(data),
-    });
+    return performWithFallback(this, 'PUT', endpoint, async (baseUrl) => {
+      const fetchPromise = fetch(`${baseUrl}${endpoint}`, {
+        method: 'PUT',
+        headers: {
+          ...REQUEST_CONFIG.headers,
+        },
+        body: JSON.stringify(data),
+      });
 
-    try {
       const response = await Promise.race([
         fetchPromise,
         createTimeout(REQUEST_TIMEOUT),
       ]);
 
       return await this._handleResponse(response);
-    } catch (error) {
-      throw this._handleError(error, 'PUT', endpoint);
-    }
+    });
   },
 
   /**
@@ -139,23 +175,21 @@ export const apiClient = {
    * @returns {Promise<any>} Response data
    */
   async delete(endpoint) {
-    const fetchPromise = fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'DELETE',
-      headers: {
-        ...REQUEST_CONFIG.headers,
-      },
-    });
+    return performWithFallback(this, 'DELETE', endpoint, async (baseUrl) => {
+      const fetchPromise = fetch(`${baseUrl}${endpoint}`, {
+        method: 'DELETE',
+        headers: {
+          ...REQUEST_CONFIG.headers,
+        },
+      });
 
-    try {
       const response = await Promise.race([
         fetchPromise,
         createTimeout(REQUEST_TIMEOUT),
       ]);
 
       return await this._handleResponse(response);
-    } catch (error) {
-      throw this._handleError(error, 'DELETE', endpoint);
-    }
+    });
   },
 
   /**

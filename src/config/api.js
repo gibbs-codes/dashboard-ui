@@ -3,11 +3,72 @@
  * Defines base URLs and all API endpoints for the dashboard
  */
 
-// Base URLs from environment variables with fallback defaults
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-export const WS_BASE_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:3001';
-console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
-console.log('API_BASE_URL:', API_BASE_URL);
+const DEFAULT_HTTP = 'http://localhost:3001';
+const DEFAULT_WS = 'ws://localhost:3001';
+
+/**
+ * Build a list of fallback URLs given the configured value
+ * Ensures we can reach the API even if the Docker hostname differs
+ * between environments (mac mini vs local dev).
+ *
+ * @param {string} primaryUrl - Configured base URL
+ * @param {Array<[string, string]>} replacements - List of host replacements
+ * @returns {string[]} Ordered list of candidate URLs
+ */
+const buildFallbackUrls = (primaryUrl, replacements = []) => {
+  const urlSet = new Set();
+
+  if (primaryUrl) {
+    urlSet.add(primaryUrl);
+  }
+
+  replacements.forEach(([needle, replacement]) => {
+    if (primaryUrl && primaryUrl.includes(needle)) {
+      urlSet.add(primaryUrl.replace(needle, replacement));
+    }
+  });
+
+  if (typeof window !== 'undefined') {
+    try {
+      const primary = new URL(primaryUrl || DEFAULT_HTTP);
+      const protocol = primary.protocol || window.location.protocol;
+      const port = primary.port || '3001';
+      urlSet.add(`${protocol}//${window.location.hostname}:${port}`);
+    } catch (error) {
+      // Ignore URL parsing issues; fall back to default
+    }
+  }
+
+  if (!urlSet.size) {
+    urlSet.add(DEFAULT_HTTP);
+  }
+
+  return Array.from(urlSet);
+};
+
+const rawApiUrl = import.meta.env.VITE_API_URL || DEFAULT_HTTP;
+const rawWsUrl = import.meta.env.VITE_WS_URL || DEFAULT_WS;
+
+export const API_BASE_URLS = buildFallbackUrls(rawApiUrl, [
+  ['dashboard-api-production', 'ctaaapi-production'],
+  ['ctaaapi-production', 'dashboard-api-production'],
+  ['localhost', 'host.docker.internal'],
+]);
+export const API_BASE_URL = API_BASE_URLS[0];
+
+export const WS_BASE_URLS = buildFallbackUrls(rawWsUrl, [
+  ['dashboard-api-production', 'ctaaapi-production'],
+  ['ctaaapi-production', 'dashboard-api-production'],
+  ['localhost', 'host.docker.internal'],
+]);
+export const WS_BASE_URL = WS_BASE_URLS[0];
+
+if (import.meta.env.DEV) {
+  console.log('[config/api] VITE_API_URL:', import.meta.env.VITE_API_URL);
+  console.log('[config/api] API_BASE_URL candidates:', API_BASE_URLS);
+  console.log('[config/api] VITE_WS_URL:', import.meta.env.VITE_WS_URL);
+  console.log('[config/api] WS_BASE_URL candidates:', WS_BASE_URLS);
+}
 /**
  * API Endpoints
  * All available routes from the dashboard-api backend
