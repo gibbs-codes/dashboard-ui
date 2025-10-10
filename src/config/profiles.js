@@ -10,22 +10,22 @@
 export const PROFILES = {
   /**
    * Default Profile
-   * Basic information: weather and transit
+   * Fullpage art with weather and time
    */
   default: {
     id: 'default',
     name: 'Default',
-    description: 'Basic information display',
+    description: 'Fullpage art display with weather and time',
     data: {
       weather: true,
-      transit: true,
+      transit: false,
       calendar: false,
       tasks: false,
       nextEvent: false,
       artwork: true,
     },
     displays: {
-      tv: 'TVDefault',
+      tv: 'TVArt',
       projector: {
         left: 'Transit',
         center: 'ArtCanvas',
