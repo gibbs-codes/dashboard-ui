@@ -9,6 +9,7 @@ import { ConnectionIndicator } from '../components/shared/ConnectionIndicator';
 import TVDefault from '../displays/tv/TVDefault';
 import TVMorning from '../displays/tv/TVMorning';
 import TVFocus from '../displays/tv/TVFocus';
+import TVArt from '../displays/tv/TVArt';
 import { Clock } from '../components/shared/Clock';
 import { DateDisplay } from '../components/shared/DateDisplay';
 
@@ -37,11 +38,12 @@ const RelaxDisplay = () => {
  * Maps profile IDs to display components
  */
 const DISPLAY_MAP = {
-  default: TVDefault,
+  default: TVArt,
   morning: TVMorning,
   focus: TVFocus,
-  work: TVDefault, // Reuse default for work mode
+  work: TVDefault,
   relax: RelaxDisplay,
+  art: TVArt,
 };
 
 /**
