@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "dev:tv": "vite --open /tv.html",
-    "dev:projector": "vite --open /projector.html",
+    "dev:tv": "vite --open /tv/",
+    "dev:projector": "vite --open /projector/",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"

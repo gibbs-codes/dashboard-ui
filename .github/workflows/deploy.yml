@@ -111,10 +111,10 @@ jobs:
         docker ps | grep dashboard-ui-production
         
         echo "Testing health endpoint..."
-        if curl -f http://localhost:3000/projector.html; then
+        if curl -f http://localhost:3000/projector/; then
           echo "✅ Projector UI deployment successful!"
-        elif curl -f http://localhost:3000/; then
-          echo "✅ Projector UI deployment responding on root path"
+        elif curl -f http://localhost:3000/projector/index.html; then
+          echo "✅ Projector UI deployment responding on index file"
         else
           echo "❌ Health check failed"
           echo "Container logs:"
