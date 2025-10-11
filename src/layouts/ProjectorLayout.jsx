@@ -116,7 +116,7 @@ const canvasPositions = {
     position: 'fixed',
     left: '583px',
     top: '235px',
-    width: '540px',
+    width: '537px',
     height: '803px',
   },
   right: {
