@@ -1,120 +1,103 @@
 /**
- * TVFocus Component
- * Minimal focus mode for TV display - shows only next event
+ * TVArt Component
+ * Fullpage art display with time and weather overlay
  */
 
-import React, { useState, useEffect } from 'react';
-import { Clock } from '../../components/shared/Clock';
-import { DateDisplay } from '../../components/shared/DateDisplay';
-import { MapPin, Clock as ClockIcon } from 'lucide-react';
+import React from 'react';
+import { ArtCanvas } from '../../components/projector/ArtCanvas';
+import {
+  Sun,
+  Moon,
+  Cloud,
+  CloudSun,
+  CloudMoon,
+  Cloudy,
+  CloudRain,
+  CloudDrizzle,
+  CloudLightning,
+  CloudSnow,
+  CloudFog,
+} from 'lucide-react';
 
 /**
- * Get minutes until event
- * @param {string} startTime - ISO datetime string
- * @returns {number} Minutes until event
+ * Map OpenWeatherMap icon codes to Lucide React icons
  */
-const getMinutesUntil = (startTime) => {
-  const now = new Date();
-  const start = new Date(startTime);
-  const diff = start - now;
-  return Math.floor(diff / 60000);
+const getWeatherIcon = (iconCode) => {
+  if (!iconCode) return Cloud;
+
+  const iconMap = {
+    '01d': Sun, '01n': Moon,
+    '02d': CloudSun, '02n': CloudMoon,
+    '03d': Cloud, '03n': Cloud,
+    '04d': Cloudy, '04n': Cloudy,
+    '09d': CloudRain, '09n': CloudRain,
+    '10d': CloudDrizzle, '10n': CloudDrizzle,
+    '11d': CloudLightning, '11n': CloudLightning,
+    '13d': CloudSnow, '13n': CloudSnow,
+    '50d': CloudFog, '50n': CloudFog,
+  };
+
+  return iconMap[iconCode] || Cloud;
 };
 
 /**
- * Format countdown
- * @param {number} minutes - Minutes until event
- * @returns {string} Formatted countdown
+ * Format time in 12-hour format
  */
-const formatCountdown = (minutes) => {
-  if (minutes < 0) return 'Started';
-  if (minutes === 0) return 'Starting now';
-  if (minutes === 1) return '1 minute';
-  if (minutes < 60) return `${minutes} minutes`;
-
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-
-  if (hours === 1 && mins === 0) return '1 hour';
-  if (hours === 1) return `1 hour ${mins} min`;
-  if (mins === 0) return `${hours} hours`;
-  return `${hours} hours ${mins} min`;
-};
-
-/**
- * Get countdown color based on urgency
- * @param {number} minutes - Minutes until event
- * @returns {string} Tailwind color class
- */
-const getCountdownColor = (minutes) => {
-  if (minutes < 0) return 'text-gray-400';
-  if (minutes <= 15) return 'text-red-400';
-  if (minutes <= 60) return 'text-yellow-400';
-  return 'text-green-400';
-};
-
-/**
- * Format event time
- * @param {string} dateStr - ISO datetime string
- * @returns {string} Formatted time
- */
-const formatEventTime = (dateStr) => {
-  const date = new Date(dateStr);
+const formatTime = (date) => {
   const hours = date.getHours();
   const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  const displayHours = hours % 12 || 12;
-  const displayMinutes = minutes.toString().padStart(2, '0');
-  return `${displayHours}:${displayMinutes} ${ampm}`;
+  const hours12 = hours % 12 || 12;
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  return `${hours12}:${formattedMinutes} ${period}`;
 };
 
 /**
- * LargeNextEvent Component
- * Shows next event with large text
+ * Format date
  */
-const LargeNextEvent = ({ event }) => {
-  const [minutesUntil, setMinutesUntil] = useState(
-    getMinutesUntil(event.start)
-  );
+const formatDate = (date) => {
+  const options = { weekday: 'long', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString(undefined, options);
+};
 
-  // Update countdown every minute
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMinutesUntil(getMinutesUntil(event.start));
-    }, 60000); // 1 minute
+/**
+ * ClockWeatherDisplay Component
+ * Combined display for time, date, and weather
+ */
+const ClockWeatherDisplay = ({ weather }) => {
+  const [time, setTime] = React.useState(new Date());
 
+  React.useEffect(() => {
+    const interval = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(interval);
-  }, [event.start]);
+  }, []);
 
-  const countdown = formatCountdown(minutesUntil);
-  const countdownColor = getCountdownColor(minutesUntil);
+  const WeatherIcon = weather ? getWeatherIcon(weather.icon) : null;
 
   return (
-    <div className="text-center text-white max-w-4xl">
-      {/* Title */}
-      <h1 className="text-6xl font-bold mb-8 text-shadow-lg leading-tight">
-        {event.title}
-      </h1>
-
+    <div className="flex items-center gap-12">
       {/* Time */}
-      <div className="flex items-center justify-center gap-3 mb-6">
-        <ClockIcon className="w-10 h-10 text-blue-400" strokeWidth={1.5} />
-        <p className="text-4xl text-white/90 text-shadow">
-          {formatEventTime(event.start)}
-        </p>
+      <div className="text-white">
+        <div className="text-9xl font-extralight tracking-tighter tabular-nums drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+          {formatTime(time)}
+        </div>
+        <div className="text-2xl font-extralight tracking-widest uppercase text-white/85 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] mt-3">
+          {formatDate(time)}
+        </div>
       </div>
 
-      {/* Countdown */}
-      <p className={`text-3xl font-bold mb-6 ${countdownColor} text-shadow`}>
-        {countdown}
-      </p>
-
-      {/* Location */}
-      {event.location && (
-        <div className="flex items-center justify-center gap-3 mt-8">
-          <MapPin className="w-8 h-8 text-purple-400" strokeWidth={1.5} />
-          <p className="text-2xl text-white/80 text-shadow">
-            {event.location}
-          </p>
+      {/* Weather */}
+      {weather && (
+        <div className="flex items-center gap-5 text-white">
+          <WeatherIcon className="w-20 h-20 text-white/90" strokeWidth={1} />
+          <div>
+            <div className="text-7xl font-extralight tabular-nums tracking-tighter">
+              {Math.round(weather.temp)}°
+            </div>
+            <div className="text-base font-extralight tracking-wide text-white/75 mt-1 capitalize">
+              {weather.condition}
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -122,80 +105,70 @@ const LargeNextEvent = ({ event }) => {
 };
 
 /**
- * NoEventsView Component
- * Shows clock and date when no events
- */
-const NoEventsView = () => {
-  return (
-    <div className="text-center text-white">
-      <p className="text-3xl text-white/60 mb-12 text-shadow">
-        No upcoming events
-      </p>
-      <Clock
-        format="12h"
-        showSeconds={true}
-        className="text-7xl font-bold mb-6 text-shadow-lg"
-      />
-      <DateDisplay
-        format="full"
-        className="text-3xl text-white/90 text-shadow"
-      />
-    </div>
-  );
-};
-
-/**
- * SmallClock Component
- * Fixed position clock in bottom-right
- */
-const SmallClock = () => {
-  return (
-    <div className="fixed bottom-4 right-4 text-white text-right">
-      <Clock
-        format="12h"
-        showSeconds={false}
-        className="text-2xl font-bold text-shadow"
-      />
-      <DateDisplay
-        format="short"
-        className="text-sm text-white/70 text-shadow mt-1"
-      />
-    </div>
-  );
-};
-
-/**
- * TVFocus Component
- * Minimal focus mode for TV display
+ * TVArt Component
+ * Displays fullpage artwork from API with time and weather overlay
+ *
+ * Expected API data structure:
+ * {
+ *   artworkTV: {
+ *     imageUrl: string,  // Full URL to artwork image
+ *     title: string,     // Artwork title
+ *     artist: string,    // Artist name
+ *     date: string       // Date/period (e.g., "1889" or "19th century")
+ *   },
+ *   weather: {
+ *     temp: number,       // Temperature in Fahrenheit or Celsius
+ *     condition: string,  // Weather condition (e.g., "Cloudy", "Clear")
+ *     icon: string        // OpenWeatherMap icon code (e.g., "01d", "10n")
+ *   }
+ * }
  *
  * @param {Object} props
  * @param {Object} props.data - Dashboard data
  * @returns {JSX.Element}
  */
-export const TVFocus = ({ data = {} }) => {
-  const { events = [] } = data;
-
-  // Get next event
-  const now = new Date();
-  const nextEvent = events
-    .filter(event => new Date(event.start) > now)
-    .sort((a, b) => new Date(a.start) - new Date(b.start))[0];
+export const TVArt = ({ data = {} }) => {
+  const { artworkTV: artwork = null, weather = null } = data;
 
   return (
     <div className="h-screen w-screen relative">
-      {/* Main content (centered) */}
-      <div className="h-full flex items-center justify-center px-8">
-        {nextEvent ? (
-          <LargeNextEvent event={nextEvent} />
-        ) : (
-          <NoEventsView />
-        )}
+      {/* Fullpage Art Background */}
+      <ArtCanvas
+        artwork={artwork}
+        className="absolute inset-0"
+        cycleInterval={300000} // 5 minutes
+      />
+
+      {/* Gradient overlay for better text visibility */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/70" />
+
+      {/* Time, Date & Weather Display - Bottom Third */}
+      <div className="absolute bottom-16 left-16">
+        <ClockWeatherDisplay weather={weather} />
       </div>
 
-      {/* Small clock (bottom-right) */}
-      {nextEvent && <SmallClock />}
+      {/* Artwork Info - Bottom Right (if available) */}
+      {artwork?.title && (
+        <div className="absolute bottom-16 right-16 max-w-md text-right">
+          <div className="backdrop-blur-md bg-black/25 rounded-xl px-6 py-4 drop-shadow-[0_4px_20px_rgba(0,0,0,0.7)]">
+            <h2 className="text-xl font-light text-white mb-1">
+              {artwork.title}
+            </h2>
+            {artwork.artist && (
+              <p className="text-sm font-light text-white/85">
+                {artwork.artist}
+              </p>
+            )}
+            {artwork.date && (
+              <p className="text-xs font-light text-white/60 mt-1">
+                {artwork.date}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default TVFocus;
+export default TVArt;
