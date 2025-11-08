@@ -19,6 +19,7 @@ body {
            env(safe-area-inset-right, 20px)
            env(safe-area-inset-bottom, 20px)
            env(safe-area-inset-left, 20px);
+  cursor: none;
 }
 
 /* Enhanced Glass-Morphism Cards */
