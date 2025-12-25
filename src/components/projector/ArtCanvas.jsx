@@ -296,7 +296,7 @@ export const ArtCanvas = ({
             </div>
           )}
 
-          {/* Artwork image */}
+          {/* Artwork image with Ken Burns effect */}
           <img
             src={artwork.imageUrl}
             alt={artwork.title || 'Artwork'}
@@ -308,9 +308,25 @@ export const ArtCanvas = ({
               object-cover
               transition-opacity
               duration-1000
+              animate-ken-burns
               ${imageLoaded ? 'opacity-100' : 'opacity-0'}
             `}
           />
+
+          {/* Ken Burns animation */}
+          <style>{`
+            @keyframes ken-burns {
+              0% {
+                transform: scale(1) translate(0, 0);
+              }
+              100% {
+                transform: scale(1.1) translate(-2%, -2%);
+              }
+            }
+            .animate-ken-burns {
+              animation: ken-burns 45s ease-in-out infinite alternate;
+            }
+          `}</style>
         </div>
       )}
     </div>

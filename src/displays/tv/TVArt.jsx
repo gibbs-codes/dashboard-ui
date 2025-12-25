@@ -164,6 +164,13 @@ export const TVArt = ({ data = {} }) => {
                 {artwork.date}
               </p>
             )}
+            {artwork.source && (
+              <p className="text-xs font-light text-white/50 mt-2 italic">
+                {artwork.source === 'artic' && 'Art Institute of Chicago'}
+                {artwork.source === 'met' && 'Metropolitan Museum of Art'}
+                {artwork.source === 'cleveland' && 'Cleveland Museum of Art'}
+              </p>
+            )}
           </div>
         </div>
       )}

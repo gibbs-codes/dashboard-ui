@@ -6,11 +6,20 @@
 import React from 'react';
 
 /**
+ * Museum name mapper
+ */
+const MUSEUM_NAMES = {
+  artic: 'Art Institute of Chicago',
+  met: 'Metropolitan Museum of Art',
+  cleveland: 'Cleveland Museum of Art',
+};
+
+/**
  * FloatingArtworkInfo Component
  * Displays artwork information below the canvas
  *
  * @param {Object} props
- * @param {Object} props.artwork - Artwork data { title, artist, date }
+ * @param {Object} props.artwork - Artwork data { title, artist, date, source }
  * @param {Object} props.style - Position and size styles
  * @param {string} props.className - Additional CSS classes
  * @returns {JSX.Element}
@@ -20,7 +29,8 @@ export const FloatingArtworkInfo = ({ artwork, style, className = '' }) => {
     return null;
   }
 
-  const { title, artist, date } = artwork;
+  const { title, artist, date, source } = artwork;
+  const museumName = source ? MUSEUM_NAMES[source] || source : null;
 
   return (
     <div
@@ -47,6 +57,11 @@ export const FloatingArtworkInfo = ({ artwork, style, className = '' }) => {
         <p className="text-sm text-gray-300">
           {artist}
           {date && <span className="text-gray-400"> • {date}</span>}
+        </p>
+      )}
+      {museumName && (
+        <p className="text-xs text-gray-400 mt-1 italic">
+          {museumName}
         </p>
       )}
     </div>
