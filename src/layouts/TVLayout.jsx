@@ -39,7 +39,7 @@ const RelaxDisplay = () => {
  */
 const DISPLAY_MAP = {
   default: TVArt,
-  morning: TVArt,
+  morning: TVMorning,
   focus: TVArt,
   work: TVArt,
   relax: TVArt,
