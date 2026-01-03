@@ -251,17 +251,18 @@ export const ArtCanvas = ({
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [videoLoaded, setVideoLoaded] = useState(false);
 
-  // Check if this is a video/cinemagraph
-  const isVideo = artwork?.isVideo || artwork?.type === 'cinemagraph';
-  const mediaUrl = isVideo ? (artwork?.videoUrl || artwork?.imageUrl) : artwork?.imageUrl;
+  // For cinemagraphs, use GIF format for maximum browser compatibility
+  // (Some kiosk browsers don't support MP4 video tags well)
+  const isCinemagraph = artwork?.isVideo || artwork?.type === 'cinemagraph';
+  const mediaUrl = isCinemagraph
+    ? (artwork?.gifUrl || artwork?.imageUrl)  // Use GIF for cinemagraphs
+    : artwork?.imageUrl;                       // Use regular image for static art
 
   // Reset states when artwork changes
   useEffect(() => {
     setImageLoaded(false);
     setImageError(false);
-    setVideoLoaded(false);
   }, [mediaUrl]);
 
   const handleImageLoad = () => {
@@ -272,16 +273,6 @@ export const ArtCanvas = ({
   const handleImageError = () => {
     setImageError(true);
     setImageLoaded(false);
-  };
-
-  const handleVideoLoad = () => {
-    setVideoLoaded(true);
-    setImageError(false);
-  };
-
-  const handleVideoError = () => {
-    setImageError(true);
-    setVideoLoaded(false);
   };
 
   // Show generative art if no artwork or media failed to load
@@ -303,56 +294,34 @@ export const ArtCanvas = ({
         // Fallback to generative art
         <GenerativeArtFallback cycleInterval={cycleInterval} />
       ) : (
-        // Display artwork (image or video)
+        // Display artwork (static image or animated GIF)
         <div className="relative h-full w-full">
           {/* Loading state - show generative art while loading */}
-          {!imageLoaded && !videoLoaded && (
+          {!imageLoaded && (
             <div className="absolute inset-0">
               <GenerativeArtFallback cycleInterval={cycleInterval} />
             </div>
           )}
 
-          {/* Render video (cinemagraph) or image */}
-          {isVideo ? (
-            // Cinemagraph video - no Ken Burns effect needed
-            <video
-              src={mediaUrl}
-              autoPlay
-              loop
-              muted
-              playsInline
-              onLoadedData={handleVideoLoad}
-              onError={handleVideoError}
-              className={`
-                w-full
-                h-full
-                object-cover
-                transition-opacity
-                duration-1000
-                ${videoLoaded ? 'opacity-100' : 'opacity-0'}
-              `}
-            />
-          ) : (
-            // Static artwork image with Ken Burns effect
-            <img
-              src={mediaUrl}
-              alt={artwork.title || 'Artwork'}
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-              className={`
-                w-full
-                h-full
-                object-cover
-                transition-opacity
-                duration-1000
-                animate-ken-burns
-                ${imageLoaded ? 'opacity-100' : 'opacity-0'}
-              `}
-            />
-          )}
+          {/* Render image (handles both static art and animated GIFs) */}
+          <img
+            src={mediaUrl}
+            alt={artwork?.title || 'Artwork'}
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+            className={`
+              w-full
+              h-full
+              object-cover
+              transition-opacity
+              duration-1000
+              ${!isCinemagraph ? 'animate-ken-burns' : ''}
+              ${imageLoaded ? 'opacity-100' : 'opacity-0'}
+            `}
+          />
 
-          {/* Ken Burns animation (only for static images) */}
-          {!isVideo && (
+          {/* Ken Burns animation (only for static images, not cinemagraphs) */}
+          {!isCinemagraph && (
             <style>{`
               @keyframes ken-burns {
                 0% {
