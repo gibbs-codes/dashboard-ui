@@ -180,6 +180,7 @@ export const TVMorning = ({ data = {} }) => {
                 {artwork.source === 'artic' && 'Art Institute of Chicago'}
                 {artwork.source === 'met' && 'Metropolitan Museum of Art'}
                 {artwork.source === 'cleveland' && 'Cleveland Museum of Art'}
+                {artwork.source === 'giphy' && 'GIPHY Cinemagraph'}
               </p>
             )}
           </div>

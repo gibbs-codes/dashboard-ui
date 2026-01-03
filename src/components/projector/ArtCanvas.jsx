@@ -251,12 +251,18 @@ export const ArtCanvas = ({
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+
+  // Check if this is a video/cinemagraph
+  const isVideo = artwork?.isVideo || artwork?.type === 'cinemagraph';
+  const mediaUrl = isVideo ? (artwork?.videoUrl || artwork?.imageUrl) : artwork?.imageUrl;
 
   // Reset states when artwork changes
   useEffect(() => {
     setImageLoaded(false);
     setImageError(false);
-  }, [artwork?.imageUrl]);
+    setVideoLoaded(false);
+  }, [mediaUrl]);
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -268,8 +274,18 @@ export const ArtCanvas = ({
     setImageLoaded(false);
   };
 
-  // Show generative art if no artwork or image failed to load
-  const showGenerativeArt = !artwork?.imageUrl || imageError;
+  const handleVideoLoad = () => {
+    setVideoLoaded(true);
+    setImageError(false);
+  };
+
+  const handleVideoError = () => {
+    setImageError(true);
+    setVideoLoaded(false);
+  };
+
+  // Show generative art if no artwork or media failed to load
+  const showGenerativeArt = !mediaUrl || imageError;
 
   return (
     <div
@@ -287,46 +303,70 @@ export const ArtCanvas = ({
         // Fallback to generative art
         <GenerativeArtFallback cycleInterval={cycleInterval} />
       ) : (
-        // Display artwork image
+        // Display artwork (image or video)
         <div className="relative h-full w-full">
           {/* Loading state - show generative art while loading */}
-          {!imageLoaded && (
+          {!imageLoaded && !videoLoaded && (
             <div className="absolute inset-0">
               <GenerativeArtFallback cycleInterval={cycleInterval} />
             </div>
           )}
 
-          {/* Artwork image with Ken Burns effect */}
-          <img
-            src={artwork.imageUrl}
-            alt={artwork.title || 'Artwork'}
-            onLoad={handleImageLoad}
-            onError={handleImageError}
-            className={`
-              w-full
-              h-full
-              object-cover
-              transition-opacity
-              duration-1000
-              animate-ken-burns
-              ${imageLoaded ? 'opacity-100' : 'opacity-0'}
-            `}
-          />
+          {/* Render video (cinemagraph) or image */}
+          {isVideo ? (
+            // Cinemagraph video - no Ken Burns effect needed
+            <video
+              src={mediaUrl}
+              autoPlay
+              loop
+              muted
+              playsInline
+              onLoadedData={handleVideoLoad}
+              onError={handleVideoError}
+              className={`
+                w-full
+                h-full
+                object-cover
+                transition-opacity
+                duration-1000
+                ${videoLoaded ? 'opacity-100' : 'opacity-0'}
+              `}
+            />
+          ) : (
+            // Static artwork image with Ken Burns effect
+            <img
+              src={mediaUrl}
+              alt={artwork.title || 'Artwork'}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              className={`
+                w-full
+                h-full
+                object-cover
+                transition-opacity
+                duration-1000
+                animate-ken-burns
+                ${imageLoaded ? 'opacity-100' : 'opacity-0'}
+              `}
+            />
+          )}
 
-          {/* Ken Burns animation */}
-          <style>{`
-            @keyframes ken-burns {
-              0% {
-                transform: scale(1) translate(0, 0);
+          {/* Ken Burns animation (only for static images) */}
+          {!isVideo && (
+            <style>{`
+              @keyframes ken-burns {
+                0% {
+                  transform: scale(1) translate(0, 0);
+                }
+                100% {
+                  transform: scale(1.1) translate(-2%, -2%);
+                }
               }
-              100% {
-                transform: scale(1.1) translate(-2%, -2%);
+              .animate-ken-burns {
+                animation: ken-burns 45s ease-in-out infinite alternate;
               }
-            }
-            .animate-ken-burns {
-              animation: ken-burns 45s ease-in-out infinite alternate;
-            }
-          `}</style>
+            `}</style>
+          )}
         </div>
       )}
     </div>
