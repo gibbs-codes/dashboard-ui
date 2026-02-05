@@ -1,4 +1,4 @@
-name: Deploy Projector UI to Mac Mini
+name: Deploy Projector UI to Sentinel
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: [self-hosted, linux, ARM64]
     
     steps:
     - name: Checkout code
