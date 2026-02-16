@@ -3,8 +3,9 @@
  * Defines base URLs and all API endpoints for the dashboard
  */
 
-const DEFAULT_HTTP = 'http://localhost:3001';
-const DEFAULT_WS = 'ws://localhost:3001';
+// Default to lifestack API (port 3000)
+const DEFAULT_HTTP = 'http://localhost:3000';
+const DEFAULT_WS = 'ws://localhost:3000';
 
 /**
  * Build a list of fallback URLs given the configured value
@@ -32,7 +33,7 @@ const buildFallbackUrls = (primaryUrl, replacements = []) => {
     try {
       const primary = new URL(primaryUrl || DEFAULT_HTTP);
       const protocol = primary.protocol || window.location.protocol;
-      const port = primary.port || '3001';
+      const port = primary.port || '3000';
       urlSet.add(`${protocol}//${window.location.hostname}:${port}`);
     } catch (error) {
       // Ignore URL parsing issues; fall back to default
@@ -97,14 +98,14 @@ export const ENDPOINTS = {
     current: '/api/weather/current',
   },
 
-  // Calendar endpoints
+  // Calendar endpoints (lifestack path)
   calendar: {
-    today: '/api/calendar/today',
+    today: '/api/calendar/events/today',
   },
 
-  // Tasks endpoints
+  // Tasks endpoints (via unified service)
   tasks: {
-    all: '/api/tasks/all',
+    all: '/api/unified/tasks',
   },
 };
 
