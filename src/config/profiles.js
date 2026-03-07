@@ -111,51 +111,52 @@ export const PROFILES = {
 
   /**
    * Relax Profile
-   * Art mode: no information, just visuals
+   * Generative art mode: no data, just visuals
    */
   relax: {
     id: 'relax',
     name: 'Relax Mode',
-    description: 'Art mode with minimal information',
+    description: 'Generative art, no data',
     data: {
       weather: false,
-      transit: false,
+      transit: true,
       calendar: false,
       tasks: false,
       nextEvent: false,
+      artwork: false,
     },
     displays: {
-      tv: 'TVArt',
+      tv: 'TVRelax',
       projector: {
-        left: 'ArtCanvas',
-        center: 'ClockOnly',
-        right: 'ArtCanvas',
+        left: 'Transit',
+        center: 'FlowField',
+        right: 'OrbitalParticles',
       },
     },
   },
 
   /**
    * Gallery Profile
-   * Fullpage art with weather and time (matches backend mode: "gallery")
+   * Algorithm showcase with swapped generative art
    */
   gallery: {
     id: 'gallery',
     name: 'Gallery Mode',
-    description: 'Fullpage art display with weather and time',
+    description: 'Algorithm showcase',
     data: {
-      weather: true,
-      transit: false,
+      weather: false,
+      transit: true,
       calendar: false,
       tasks: false,
       nextEvent: false,
-      artwork: true,
+      artwork: false,
     },
     displays: {
-      tv: 'TVArt',
+      tv: 'TVRelax',
       projector: {
-        left: 'Transit',           // Transit data
-        center: 'ArtCanvas',    // Clock/Weather (CHANGE THIS)
-        right: 'ArtCanvas',         // Artwork
+        left: 'Transit',
+        center: 'OrbitalParticles',
+        right: 'FlowField',
       },
     },
   },

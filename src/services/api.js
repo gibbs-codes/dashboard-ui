@@ -385,5 +385,15 @@ export const healthCheck = async () => {
   });
 };
 
+/**
+ * Get LLM-generated briefing summary
+ * @returns {Promise<{success: boolean, data?: {summary: string|null}, error?: string}>}
+ */
+export const getBriefingSummary = async () => {
+  return wrapApiCall(async () => {
+    return await apiClient.get(ENDPOINTS.briefing.summary);
+  });
+};
+
 // Export for testing and advanced usage
 export { ApiError };

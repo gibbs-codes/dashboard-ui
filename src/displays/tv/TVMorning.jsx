@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { ArtCanvas } from '../../components/projector/ArtCanvas';
+import { BriefingCard } from '../../components/tv/BriefingCard';
 import { Calendar, CheckSquare, Clock } from 'lucide-react';
 
 /**
@@ -40,7 +41,7 @@ const isMorningHours = () => {
 
 /**
  * MorningOverlay Component
- * Displays tasks and calendar events in morning hours
+ * Displays briefing, tasks, and calendar events in morning hours
  */
 const MorningOverlay = ({ data }) => {
   const { tasks = [], nextEvent = null } = data;
@@ -50,6 +51,9 @@ const MorningOverlay = ({ data }) => {
 
   return (
     <div className="absolute top-16 left-16 right-16 pointer-events-none">
+      {/* Briefing Card - Top */}
+      <BriefingCard className="mb-6 max-w-4xl" />
+
       <div className="flex gap-8 items-start">
         {/* Next Event Card */}
         {nextEvent && (

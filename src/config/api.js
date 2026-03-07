@@ -107,6 +107,11 @@ export const ENDPOINTS = {
   tasks: {
     all: '/api/unified/tasks',
   },
+
+  // Briefing endpoints
+  briefing: {
+    summary: '/api/briefing/summary',
+  },
 };
 
 /**

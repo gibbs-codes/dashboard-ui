@@ -10,6 +10,8 @@ import { TransitCanvas } from '../components/projector/TransitCanvas';
 import { ClockWeatherCanvas } from '../components/projector/ClockWeatherCanvas';
 import { ArtCanvas } from '../components/projector/ArtCanvas';
 import { CalendarTimelineCanvas } from '../components/projector/CalendarTimelineCanvas';
+import { FlowField } from '../components/generative/FlowField';
+import { OrbitalParticles } from '../components/generative/OrbitalParticles';
 import { FloatingClock } from '../components/projector/FloatingClock';
 import { FloatingWeather } from '../components/projector/FloatingWeather';
 import { FloatingArtworkInfo } from '../components/projector/FloatingArtworkInfo';
@@ -25,12 +27,25 @@ const COMPONENT_MAP = {
   ClockWeather: ClockWeatherCanvas,
   ArtCanvas: ArtCanvas,
   CalendarTimeline: CalendarTimelineCanvas,
+  FlowField: FlowField,
+  OrbitalParticles: OrbitalParticles,
+};
+
+/**
+ * Canvas dimension constants by position
+ */
+const CANVAS_DIMENSIONS = {
+  left: { width: 415, height: 1030 },
+  center: { width: 535, height: 803 },
+  right: { width: 814, height: 540 },
 };
 
 /**
  * Get component props based on component name, data, and position
  */
 const getComponentProps = (componentName, data, position) => {
+  const dimensions = CANVAS_DIMENSIONS[position] || CANVAS_DIMENSIONS.center;
+
   switch (componentName) {
     case 'Transit':
       return { data: data?.transit || null };
@@ -44,6 +59,18 @@ const getComponentProps = (componentName, data, position) => {
         ? data?.artworkCenter
         : data?.artworkRight;
       return { artwork: artworkData || null };
+    case 'FlowField':
+      return {
+        width: dimensions.width,
+        height: dimensions.height,
+        speed: 1.0,
+      };
+    case 'OrbitalParticles':
+      return {
+        width: dimensions.width,
+        height: dimensions.height,
+        speed: 1.0,
+      };
     default:
       return {};
   }
