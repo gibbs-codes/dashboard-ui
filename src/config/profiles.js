@@ -129,8 +129,8 @@ export const PROFILES = {
       tv: 'TVRelax',
       projector: {
         left: 'Transit',
-        center: 'FlowField',
-        right: 'OrbitalParticles',
+        center: 'ArtCanvas',
+        right: 'ArtCanvas',
       },
     },
   },
@@ -155,8 +155,8 @@ export const PROFILES = {
       tv: 'TVRelax',
       projector: {
         left: 'Transit',
-        center: 'OrbitalParticles',
-        right: 'FlowField',
+        center: 'ArtCanvas',
+        right: 'ArtCanvas',
       },
     },
   },

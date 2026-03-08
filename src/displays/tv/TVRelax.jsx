@@ -3,7 +3,7 @@
  * Fullscreen generative art with minimal clock overlay
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { FlowField } from '../../components/generative/FlowField';
 
 /**
@@ -18,16 +18,6 @@ const formatTime = (date) => {
 };
 
 /**
- * Detect low power mode - defaults to TRUE for Pi compatibility
- * Use ?lowPower=false on powerful devices for full quality
- */
-const isLowPowerMode = () => {
-  if (typeof window === 'undefined') return true;
-  const params = new URLSearchParams(window.location.search);
-  return params.get('lowPower') !== 'false';
-};
-
-/**
  * TVRelax Component
  * Minimal relax display: fullscreen flow field + centered clock
  *
@@ -37,7 +27,6 @@ const isLowPowerMode = () => {
  */
 export const TVRelax = ({ data = {} }) => {
   const [time, setTime] = useState(new Date());
-  const lowPower = useMemo(() => isLowPowerMode(), []);
 
   useEffect(() => {
     const interval = setInterval(() => setTime(new Date()), 1000);
@@ -52,7 +41,6 @@ export const TVRelax = ({ data = {} }) => {
           width={1920}
           height={1080}
           speed={0.6}
-          lowPower={lowPower}
         />
       </div>
 
