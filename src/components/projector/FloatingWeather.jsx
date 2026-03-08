@@ -58,18 +58,19 @@ export const FloatingWeather = ({ weatherData, className = '' }) => {
         fixed
         flex
         items-center
+        justify-center
         gap-4
         px-6
-        py-3
-        bg-black/70
+        py-2
+        bg-black/50
         backdrop-blur-md
         rounded-lg
         ${className}
       `}
       style={{
-        left: '1280px',
-        top: '720px',
-        width: '814px',
+        left: '850px',
+        top: '5rem',
+        transform: 'translateX(-50%)',
         textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)',
       }}
     >

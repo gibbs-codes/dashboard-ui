@@ -47,7 +47,7 @@ export const FloatingClock = ({ className = '' }) => {
     <div
       style={{
         textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)',
-        left: '900px',
+        left: '850px',
         top: '1rem',
         transform: 'translateX(-50%)',
         position: 'absolute',
