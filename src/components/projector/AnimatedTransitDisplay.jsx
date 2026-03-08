@@ -110,10 +110,10 @@ const TrainDot = ({ arrival, direction }) => {
   return (
     <div className={`absolute flex items-center gap-2 transform ${positionClasses}`} style={{ top: `${topPercent}%` }}>
       <span
-        className="w-4 h-4 rounded-full shadow-lg border border-black"
+        className="w-5 h-5 rounded-full shadow-lg border-2 border-black"
         style={{ backgroundColor: config.primary }}
       />
-      <span className="text-sm font-semibold text-gray-200">
+      <span className="text-sm font-bold text-gray-100">
         {formatMinutes(minutes)}
       </span>
     </div>
@@ -128,9 +128,9 @@ const DirectionTrackVisual = ({ direction, arrivals }) => {
       <span className="text-sm font-semibold uppercase tracking-[0.3em] text-gray-400">
         {DIRECTION_LABELS[direction]}
       </span>
-      <div className="relative flex-[3] w-3 bg-zinc-900/80 border border-zinc-800 mt-6 mb-6 rounded-full overflow-visible">
+      <div className="relative flex-[3] w-4 bg-zinc-800 mt-6 mb-6 rounded-lg overflow-visible">
         <div
-          className={`absolute inset-0 ${direction === 'north' ? 'right-1' : 'left-2'} w-[2px] bg-zinc-600`}
+          className={`absolute inset-0 ${direction === 'north' ? 'right-1' : 'left-1'} w-1 bg-zinc-500 rounded-full`}
         />
 
         {displayArrivals.length === 0 ? (
@@ -150,11 +150,11 @@ const DirectionTrackVisual = ({ direction, arrivals }) => {
 const StationMarker = () => (
   <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
     <div className="flex flex-col items-center gap-2">
-      <div className="w-32 h-1 bg-gray-600/60" />
-      <span className="px-4 py-1 text-xs font-semibold tracking-[0.25em] text-black uppercase bg-gray-200 rounded-full">
+      <div className="w-32 h-1.5 bg-gray-500 rounded-full" />
+      <span className="px-4 py-1.5 text-xs font-semibold tracking-[0.25em] text-black uppercase bg-gray-200 rounded-full">
         Belmont
       </span>
-      <div className="w-32 h-1 bg-gray-600/60" />
+      <div className="w-32 h-1.5 bg-gray-500 rounded-full" />
     </div>
   </div>
 );
@@ -201,7 +201,7 @@ const BottomList = ({ lineDirectionMap }) => {
       {directionOrder.map((direction) => (
         <div
           key={direction}
-          className="bg-zinc-900/60 border border-zinc-800 rounded-2xl px-3 py-2 flex flex-col gap-2"
+          className="bg-zinc-900/80 border-2 border-zinc-700 rounded-2xl px-3 py-2 flex flex-col gap-2"
         >
           <div className="flex items-center justify-between">
             <h3 className="text-base font-semibold text-gray-100">

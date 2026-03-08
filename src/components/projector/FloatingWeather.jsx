@@ -12,7 +12,6 @@ import {
   CloudDrizzle,
   CloudFog,
   Wind,
-  Cloudy,
 } from 'lucide-react';
 
 /**
@@ -30,7 +29,7 @@ const getWeatherIcon = (condition) => {
   if (lowerCondition.includes('drizzle')) return CloudDrizzle;
   if (lowerCondition.includes('fog') || lowerCondition.includes('mist')) return CloudFog;
   if (lowerCondition.includes('wind')) return Wind;
-  if (lowerCondition.includes('cloud') || lowerCondition.includes('overcast')) return Cloudy;
+  if (lowerCondition.includes('cloud') || lowerCondition.includes('overcast')) return Cloud;
   if (lowerCondition.includes('clear') || lowerCondition.includes('sunny')) return Sun;
 
   return Cloud;
@@ -68,7 +67,7 @@ export const FloatingWeather = ({ weatherData, className = '' }) => {
         ${className}
       `}
       style={{
-        left: '1065px',  // Converted from right: 41px for zoom stability
+        left: '1280px',
         top: '620px',
         width: '814px',
         textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)',

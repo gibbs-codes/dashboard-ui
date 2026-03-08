@@ -56,6 +56,7 @@ export const FloatingClock = ({ className = '' }) => {
     >
       <time
         className="text-6xl font-bold text-white tracking-wide"
+        style={{ whiteSpace: 'nowrap' }}
         dateTime={time.toISOString()}
       >
         {formatTime(time)}
