@@ -202,13 +202,13 @@ const canvasPositions = {
         />
       )}
 
-      {/* Artwork Info - Below Weather (under Right Canvas) */}
+      {/* Artwork Info - Below Right Canvas */}
       {rightComponent === 'ArtCanvas' && (
         <FloatingArtworkInfo
           artwork={data?.artworkRight}
           style={{
             left: '1280px',
-            top: '700px',
+            top: '620px',
             width: '814px',
           }}
         />
