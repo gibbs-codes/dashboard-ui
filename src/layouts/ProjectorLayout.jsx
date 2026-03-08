@@ -148,7 +148,7 @@ const canvasPositions = {
   },
   right: {
     position: 'fixed',
-    left: '1275px',  // Converted from right: 41px (1920 - 41 - 814 = 1065)
+    left: '1175px',  // Converted from right: 41px (1920 - 41 - 814 = 1065)
     top: '61px',
     width: '814px',
     height: '540px',
