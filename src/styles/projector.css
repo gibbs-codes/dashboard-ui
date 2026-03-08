@@ -38,7 +38,7 @@ body {
            env(safe-area-inset-left, 40px);
 
   /* Hide cursor */
-  cursor: none;
+  /* cursor: none; */
 }
 
 /* Projector Display Container */
