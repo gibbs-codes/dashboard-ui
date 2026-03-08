@@ -148,7 +148,7 @@ const canvasPositions = {
   },
   right: {
     position: 'fixed',
-    right: '41px',
+    left: '1065px',  // Converted from right: 41px (1920 - 41 - 814 = 1065)
     top: '61px',
     width: '814px',
     height: '540px',
@@ -207,7 +207,7 @@ const canvasPositions = {
         <FloatingArtworkInfo
           artwork={data?.artworkRight}
           style={{
-            right: '41px',
+            left: '1065px',  // Converted from right: 41px
             top: '601px', // 61px (right top) + 540px (right height) + 20px gap
             width: '814px',
           }}

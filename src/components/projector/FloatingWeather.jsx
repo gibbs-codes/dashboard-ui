@@ -68,7 +68,7 @@ export const FloatingWeather = ({ weatherData, className = '' }) => {
         ${className}
       `}
       style={{
-        right: '41px',
+        left: '1065px',  // Converted from right: 41px for zoom stability
         top: '620px',
         width: '814px',
         textShadow: '0 2px 8px rgba(0, 0, 0, 0.8)',
