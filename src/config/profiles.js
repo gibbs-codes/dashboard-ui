@@ -160,6 +160,162 @@ export const PROFILES = {
       },
     },
   },
+
+  /**
+   * Ambient Profile
+   * Full generative art experience
+   */
+  ambient: {
+    id: 'ambient',
+    name: 'Ambient',
+    description: 'Full screen generative art',
+    data: {
+      weather: true,
+      transit: false,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+      artwork: false,
+    },
+    displays: {
+      tv: 'TVRelax',
+      projector: {
+        left: 'FlowField',
+        center: 'OrbitalParticles',
+        right: 'FlowField',
+      },
+    },
+  },
+
+  /**
+   * Commute Profile
+   * Transit-focused with clock
+   */
+  commute: {
+    id: 'commute',
+    name: 'Commute',
+    description: 'Transit times and clock',
+    data: {
+      weather: true,
+      transit: true,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+      artwork: false,
+    },
+    displays: {
+      tv: 'TVArt',
+      projector: {
+        left: 'Transit',
+        center: 'ClockWeather',
+        right: 'FlowField',
+      },
+    },
+  },
+
+  /**
+   * Artshow Profile
+   * Museum art in all canvases
+   */
+  artshow: {
+    id: 'artshow',
+    name: 'Art Show',
+    description: 'Museum artwork display',
+    data: {
+      weather: true,
+      transit: false,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+      artwork: true,
+    },
+    displays: {
+      tv: 'TVArt',
+      projector: {
+        left: 'ArtCanvas',
+        center: 'ArtCanvas',
+        right: 'ArtCanvas',
+      },
+    },
+  },
+
+  /**
+   * Minimal Profile
+   * Just clock and weather
+   */
+  minimal: {
+    id: 'minimal',
+    name: 'Minimal',
+    description: 'Clean clock and weather display',
+    data: {
+      weather: true,
+      transit: false,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+      artwork: false,
+    },
+    displays: {
+      tv: 'TVArt',
+      projector: {
+        left: 'FlowField',
+        center: 'ClockWeather',
+        right: 'OrbitalParticles',
+      },
+    },
+  },
+
+  /**
+   * Flow Profile
+   * All FlowField generative art
+   */
+  flow: {
+    id: 'flow',
+    name: 'Flow',
+    description: 'Perlin noise flow fields',
+    data: {
+      weather: true,
+      transit: false,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+      artwork: false,
+    },
+    displays: {
+      tv: 'TVRelax',
+      projector: {
+        left: 'FlowField',
+        center: 'FlowField',
+        right: 'FlowField',
+      },
+    },
+  },
+
+  /**
+   * Orbital Profile
+   * All OrbitalParticles generative art
+   */
+  orbital: {
+    id: 'orbital',
+    name: 'Orbital',
+    description: 'Orbital particle systems',
+    data: {
+      weather: true,
+      transit: false,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+      artwork: false,
+    },
+    displays: {
+      tv: 'TVRelax',
+      projector: {
+        left: 'OrbitalParticles',
+        center: 'OrbitalParticles',
+        right: 'OrbitalParticles',
+      },
+    },
+  },
 };
 
 /**

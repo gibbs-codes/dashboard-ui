@@ -237,8 +237,7 @@ body.projector-dark-room {
 /* Base canvas styling - applies to all three canvases */
 .projector-canvas {
   position: fixed;
-  /* background-color: #000000; */
-  background-color: #ee0505;
+  background-color: #000000;
   overflow: hidden;
   
   /* Ensure canvases stay in place */
