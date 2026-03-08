@@ -111,14 +111,14 @@ export const PROFILES = {
 
   /**
    * Relax Profile
-   * Generative art mode: no data, just visuals
+   * Generative art mode: flow field visuals
    */
   relax: {
     id: 'relax',
     name: 'Relax Mode',
-    description: 'Generative art, no data',
+    description: 'Generative flow field art',
     data: {
-      weather: false,
+      weather: true,
       transit: true,
       calendar: false,
       tasks: false,
@@ -129,22 +129,22 @@ export const PROFILES = {
       tv: 'TVRelax',
       projector: {
         left: 'Transit',
-        center: 'ArtCanvas',
-        right: 'ArtCanvas',
+        center: 'FlowField',
+        right: 'OrbitalParticles',
       },
     },
   },
 
   /**
    * Gallery Profile
-   * Algorithm showcase with swapped generative art
+   * Algorithm showcase with orbital particles
    */
   gallery: {
     id: 'gallery',
     name: 'Gallery Mode',
-    description: 'Algorithm showcase',
+    description: 'Orbital particles showcase',
     data: {
-      weather: false,
+      weather: true,
       transit: true,
       calendar: false,
       tasks: false,
@@ -155,8 +155,8 @@ export const PROFILES = {
       tv: 'TVRelax',
       projector: {
         left: 'Transit',
-        center: 'ArtCanvas',
-        right: 'ArtCanvas',
+        center: 'OrbitalParticles',
+        right: 'FlowField',
       },
     },
   },

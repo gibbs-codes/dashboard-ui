@@ -19,6 +19,7 @@ import ProjectorLayout from '../layouts/ProjectorLayout';
  */
 export const ProjectorDisplay = ({
   profile = 'default',
+  onProfileChange,
   data = null,
   wsConnected = false,
   lastUpdated = null,
@@ -32,6 +33,7 @@ export const ProjectorDisplay = ({
   return (
     <ProjectorLayout
       profile={profile}
+      onProfileChange={onProfileChange}
       data={data}
       wsConnected={wsConnected}
       lastUpdated={lastUpdated}

@@ -5,7 +5,7 @@ import TVDisplay from '../displays/TVDisplay';
 import ProjectorDisplay from '../displays/ProjectorDisplay';
 
 export const App = ({ displayType = 'tv' }) => {
-  const { currentProfile } = useProfile('default', displayType);
+  const { currentProfile, setProfile } = useProfile('default', displayType);
   const { data } = useDashboardData(currentProfile);
 
   const DisplayComponent = displayType === 'tv' ? TVDisplay : ProjectorDisplay;
@@ -13,6 +13,7 @@ export const App = ({ displayType = 'tv' }) => {
   return (
     <DisplayComponent
       profile={currentProfile}
+      onProfileChange={setProfile}
       data={data}
       wsConnected={true}
       lastUpdated={new Date()}

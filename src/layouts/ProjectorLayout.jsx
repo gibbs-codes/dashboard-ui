@@ -15,6 +15,7 @@ import { OrbitalParticles } from '../components/generative/OrbitalParticles';
 import { FloatingClock } from '../components/projector/FloatingClock';
 import { FloatingWeather } from '../components/projector/FloatingWeather';
 import { FloatingArtworkInfo } from '../components/projector/FloatingArtworkInfo';
+import { ProfileSwitcher } from '../components/projector/ProfileSwitcher';
 import { CanvasDebugOverlay } from '../components/debug/CanvasDebugOverlay';
 import { CanvasPositionAdjuster } from '../components/debug/CanvasPositionAdjuster';
 
@@ -117,6 +118,7 @@ const Canvas = ({ componentName, data, position, style, className = '' }) => {
  */
 export const ProjectorLayout = ({
   profile = 'default',
+  onProfileChange,
   data = {},
   wsConnected = false,
   lastUpdated = null,
@@ -213,6 +215,12 @@ const canvasPositions = {
           }}
         />
       )}
+
+      {/* Profile Switcher (bottom-left) */}
+      <ProfileSwitcher
+        currentProfile={profile}
+        onProfileChange={onProfileChange}
+      />
 
       {/* Connection indicator (bottom-right) */}
       <ConnectionIndicator
