@@ -21,12 +21,14 @@ const MUTED_PALETTE = ['#475569', '#64748b', '#94a3b8'];
  * @param {number} props.height - Canvas height in pixels
  * @param {number} props.speed - Speed multiplier (0.1-2.0, default 1.0)
  * @param {boolean} props.muted - Muted mode for focus backgrounds
+ * @param {boolean} props.lowPower - Low power mode for weak devices (Pi, etc)
  */
 export const FlowField = ({
   width = 800,
   height = 600,
   speed = 1.0,
   muted = false,
+  lowPower = true,
 }) => {
   const containerRef = useRef(null);
   const instanceRef = useRef(null);
@@ -40,7 +42,9 @@ export const FlowField = ({
     }
 
     const sketch = (p) => {
-      const PARTICLE_COUNT = 800;
+      // Low power mode: ~150 particles at 20fps vs 800 at 60fps
+      const PARTICLE_COUNT = lowPower ? 150 : 800;
+      const FRAME_RATE = lowPower ? 20 : 60;
       const NOISE_SCALE = 0.003;
       const BASE_SPEED = 1.5;
 
@@ -95,7 +99,7 @@ export const FlowField = ({
 
       p.setup = () => {
         p.createCanvas(width, height);
-        p.frameRate(60);
+        p.frameRate(FRAME_RATE);
         p.background('#0a0a1a');
 
         // Select palette based on time of day
@@ -139,7 +143,7 @@ export const FlowField = ({
         instanceRef.current = null;
       }
     };
-  }, [width, height, speed, muted]);
+  }, [width, height, speed, muted, lowPower]);
 
   return <div ref={containerRef} className="overflow-hidden" />;
 };

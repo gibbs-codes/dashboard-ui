@@ -41,9 +41,19 @@ const CANVAS_DIMENSIONS = {
 };
 
 /**
+ * Detect low power mode - defaults to TRUE for Pi compatibility
+ * Use ?lowPower=false on powerful devices for full quality
+ */
+const isLowPowerMode = () => {
+  if (typeof window === 'undefined') return true;
+  const params = new URLSearchParams(window.location.search);
+  return params.get('lowPower') !== 'false';
+};
+
+/**
  * Get component props based on component name, data, and position
  */
-const getComponentProps = (componentName, data, position) => {
+const getComponentProps = (componentName, data, position, lowPower = false) => {
   const dimensions = CANVAS_DIMENSIONS[position] || CANVAS_DIMENSIONS.center;
 
   switch (componentName) {
@@ -64,12 +74,14 @@ const getComponentProps = (componentName, data, position) => {
         width: dimensions.width,
         height: dimensions.height,
         speed: 1.0,
+        lowPower,
       };
     case 'OrbitalParticles':
       return {
         width: dimensions.width,
         height: dimensions.height,
         speed: 1.0,
+        lowPower,
       };
     default:
       return {};
@@ -80,7 +92,7 @@ const getComponentProps = (componentName, data, position) => {
  * Canvas Component
  * Renders a single fixed-position canvas with dynamic content
  */
-const Canvas = ({ componentName, data, position, style, className = '' }) => {
+const Canvas = ({ componentName, data, position, style, className = '', lowPower = false }) => {
   const Component = COMPONENT_MAP[componentName];
 
   if (!Component) {
@@ -98,7 +110,7 @@ const Canvas = ({ componentName, data, position, style, className = '' }) => {
     );
   }
 
-  const props = getComponentProps(componentName, data, position);
+  const props = getComponentProps(componentName, data, position, lowPower);
 
   return (
     <div
@@ -121,6 +133,9 @@ export const ProjectorLayout = ({
   wsConnected = false,
   lastUpdated = null,
 }) => {
+  // Detect low power mode for Pi/weak devices
+  const lowPower = isLowPowerMode();
+
   // Get profile configuration
   const profileConfig = PROFILES[profile] || PROFILES.default;
   const { projector } = profileConfig.displays;
@@ -164,6 +179,7 @@ const canvasPositions = {
         position="left"
         style={canvasPositions.left}
         className="projector-canvas-left"
+        lowPower={lowPower}
       />
 
       {/* Center Canvas - Clock/Weather */}
@@ -173,6 +189,7 @@ const canvasPositions = {
         position="center"
         style={canvasPositions.center}
         className="projector-canvas-center"
+        lowPower={lowPower}
       />
 
       {/* Right Canvas - Art/Calendar */}
@@ -182,6 +199,7 @@ const canvasPositions = {
         position="right"
         style={canvasPositions.right}
         className="projector-canvas-right"
+        lowPower={lowPower}
       />
 
       {/* Floating Clock (top-center) */}

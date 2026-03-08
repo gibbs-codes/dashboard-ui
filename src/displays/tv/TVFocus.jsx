@@ -3,8 +3,18 @@
  * Minimal distraction display: muted FlowField background with centered next event countdown
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FlowField } from '../../components/generative/FlowField';
+
+/**
+ * Detect low power mode - defaults to TRUE for Pi compatibility
+ * Use ?lowPower=false on powerful devices for full quality
+ */
+const isLowPowerMode = () => {
+  if (typeof window === 'undefined') return true;
+  const params = new URLSearchParams(window.location.search);
+  return params.get('lowPower') !== 'false';
+};
 
 /**
  * Calculate countdown string from event start time
@@ -39,6 +49,7 @@ const getCountdown = (eventStart) => {
 export const TVFocus = ({ data = {} }) => {
   const { nextEvent = null } = data;
   const [countdown, setCountdown] = useState(getCountdown(nextEvent?.start || nextEvent?.startTime));
+  const lowPower = useMemo(() => isLowPowerMode(), []);
 
   // Update countdown every minute
   useEffect(() => {
@@ -65,6 +76,7 @@ export const TVFocus = ({ data = {} }) => {
           height={1080}
           speed={0.4}
           muted={true}
+          lowPower={lowPower}
         />
       </div>
 

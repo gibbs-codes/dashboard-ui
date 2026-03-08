@@ -20,12 +20,14 @@ const MUTED_PALETTE = ['#374151', '#4b5563', '#6b7280'];
  * @param {number} props.height - Canvas height in pixels
  * @param {number} props.speed - Speed multiplier (0.1-2.0, default 1.0)
  * @param {boolean} props.muted - Muted mode for focus backgrounds
+ * @param {boolean} props.lowPower - Low power mode for weak devices (Pi, etc)
  */
 export const OrbitalParticles = ({
   width = 800,
   height = 600,
   speed = 1.0,
   muted = false,
+  lowPower = true,
 }) => {
   const containerRef = useRef(null);
   const instanceRef = useRef(null);
@@ -39,8 +41,10 @@ export const OrbitalParticles = ({
     }
 
     const sketch = (p) => {
-      const ATTRACTOR_COUNT = 4;
-      const PARTICLES_PER_ATTRACTOR = 150;
+      // Low power mode: 2 attractors with 25 particles each at 20fps
+      const ATTRACTOR_COUNT = lowPower ? 2 : 4;
+      const PARTICLES_PER_ATTRACTOR = lowPower ? 25 : 150;
+      const FRAME_RATE = lowPower ? 20 : 60;
 
       let attractors = [];
       let particles = [];
@@ -108,7 +112,7 @@ export const OrbitalParticles = ({
 
       p.setup = () => {
         p.createCanvas(width, height);
-        p.frameRate(60);
+        p.frameRate(FRAME_RATE);
         p.background('#0a1a0f');
 
         // Select palette
@@ -156,7 +160,7 @@ export const OrbitalParticles = ({
         instanceRef.current = null;
       }
     };
-  }, [width, height, speed, muted]);
+  }, [width, height, speed, muted, lowPower]);
 
   return <div ref={containerRef} className="overflow-hidden" />;
 };

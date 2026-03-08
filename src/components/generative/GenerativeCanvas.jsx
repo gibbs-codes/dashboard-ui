@@ -16,6 +16,7 @@ import { OrbitalParticles } from './OrbitalParticles';
  * @param {number} props.height - Canvas height in pixels
  * @param {number} props.speed - Speed multiplier (default 1.0)
  * @param {boolean} props.muted - Muted mode for focus backgrounds
+ * @param {boolean} props.lowPower - Low power mode for weak devices
  * @param {string} props.className - Additional CSS classes
  */
 export const GenerativeCanvas = ({
@@ -24,9 +25,10 @@ export const GenerativeCanvas = ({
   height = 600,
   speed = 1.0,
   muted = false,
+  lowPower = true,
   className = '',
 }) => {
-  const commonProps = { width, height, speed, muted };
+  const commonProps = { width, height, speed, muted, lowPower };
 
   switch (algorithm) {
     case 'flow-field':
