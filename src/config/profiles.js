@@ -36,78 +36,78 @@ export const PROFILES = {
 
   /**
    * Relax Profile
-   * Generative art mode: flow field visuals
+   * Generative art mode on TV, museum art on projector
    */
   relax: {
     id: 'relax',
     name: 'Relax Mode',
-    description: 'Generative flow field art',
+    description: 'Generative art on TV, museum art on projector',
     data: {
       weather: true,
       transit: true,
       calendar: false,
       tasks: false,
       nextEvent: false,
-      artwork: false,
+      artwork: true,
     },
     displays: {
       tv: 'TVRelax',
       projector: {
         left: 'Transit',
-        center: 'FlowField',
-        right: 'OrbitalParticles',
+        center: 'ClockWeather',
+        right: 'ArtCanvas',
       },
     },
   },
 
   /**
    * Gallery Profile
-   * Algorithm showcase with orbital particles
+   * Museum art gallery display
    */
   gallery: {
     id: 'gallery',
     name: 'Gallery Mode',
-    description: 'Orbital particles showcase',
+    description: 'Museum art gallery with transit',
     data: {
       weather: true,
       transit: true,
       calendar: false,
       tasks: false,
       nextEvent: false,
-      artwork: false,
+      artwork: true,
     },
     displays: {
       tv: 'TVRelax',
       projector: {
         left: 'Transit',
-        center: 'OrbitalParticles',
-        right: 'FlowField',
+        center: 'ArtCanvas',
+        right: 'ArtCanvas',
       },
     },
   },
 
   /**
    * Ambient Profile
-   * Full generative art experience
+   * Generative art on TV, museum art on projector
    */
   ambient: {
     id: 'ambient',
     name: 'Ambient',
-    description: 'Full screen generative art',
+    description: 'Generative art on TV, museum art on projector',
     data: {
       weather: true,
       transit: false,
       calendar: false,
       tasks: false,
       nextEvent: false,
-      artwork: false,
+      artwork: true,
     },
     displays: {
       tv: 'TVRelax',
       projector: {
-        left: 'FlowField',
-        center: 'OrbitalParticles',
-        right: 'FlowField',
+        left: 'ArtCanvas',
+        center: 'ClockWeather',
+        right: 'ArtCanvas',
       },
     },
   },
@@ -126,14 +126,14 @@ export const PROFILES = {
       calendar: false,
       tasks: false,
       nextEvent: false,
-      artwork: false,
+      artwork: true,
     },
     displays: {
       tv: 'TVArt',
       projector: {
         left: 'Transit',
         center: 'ClockWeather',
-        right: 'FlowField',
+        right: 'ArtCanvas',
       },
     },
   },
@@ -166,78 +166,78 @@ export const PROFILES = {
 
   /**
    * Minimal Profile
-   * Just clock and weather
+   * Just clock and weather with art
    */
   minimal: {
     id: 'minimal',
     name: 'Minimal',
-    description: 'Clean clock and weather display',
+    description: 'Clean clock and weather with art',
     data: {
       weather: true,
       transit: false,
       calendar: false,
       tasks: false,
       nextEvent: false,
-      artwork: false,
+      artwork: true,
     },
     displays: {
       tv: 'TVArt',
       projector: {
-        left: 'FlowField',
+        left: 'ArtCanvas',
         center: 'ClockWeather',
-        right: 'OrbitalParticles',
+        right: 'ArtCanvas',
       },
     },
   },
 
   /**
    * Flow Profile
-   * All FlowField generative art
+   * FlowField on TV, transit + art on projector
    */
   flow: {
     id: 'flow',
     name: 'Flow',
-    description: 'Perlin noise flow fields',
+    description: 'Flow art on TV, transit and art on projector',
     data: {
       weather: true,
-      transit: false,
+      transit: true,
       calendar: false,
       tasks: false,
       nextEvent: false,
-      artwork: false,
+      artwork: true,
     },
     displays: {
       tv: 'TVRelax',
       projector: {
-        left: 'FlowField',
-        center: 'FlowField',
-        right: 'FlowField',
+        left: 'Transit',
+        center: 'ArtCanvas',
+        right: 'ArtCanvas',
       },
     },
   },
 
   /**
    * Orbital Profile
-   * All OrbitalParticles generative art
+   * Orbital particles on TV, clock + art on projector
    */
   orbital: {
     id: 'orbital',
     name: 'Orbital',
-    description: 'Orbital particle systems',
+    description: 'Orbital art on TV, clock and art on projector',
     data: {
       weather: true,
       transit: false,
       calendar: false,
       tasks: false,
       nextEvent: false,
-      artwork: false,
+      artwork: true,
     },
     displays: {
       tv: 'TVRelax',
       projector: {
-        left: 'OrbitalParticles',
-        center: 'OrbitalParticles',
-        right: 'OrbitalParticles',
+        left: 'ArtCanvas',
+        center: 'ClockWeather',
+        right: 'ArtCanvas',
       },
     },
   },

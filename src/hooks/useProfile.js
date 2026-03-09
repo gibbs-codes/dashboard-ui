@@ -1,6 +1,6 @@
 /**
  * useProfile Hook
- * Manages profile state with API sync, WebSocket updates, and localStorage persistence
+ * Manages profile state with API sync, WebSocket updates, polling, and localStorage persistence
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -13,6 +13,12 @@ import wsClient, { WS_EVENTS } from '../services/websocket.js';
  * Check if running in development mode
  */
 const isDevelopment = import.meta.env.DEV;
+
+/**
+ * Polling interval for checking profile changes (5 seconds)
+ * This catches profile changes from external sources like Home Assistant
+ */
+const PROFILE_POLL_INTERVAL = 5000;
 
 /**
  * useProfile Hook
@@ -250,6 +256,45 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
       wsClient.unsubscribe(WS_EVENTS.PROFILE_CHANGED, handleProfileChanged);
     };
   }, [handleProfileChanged]);
+
+  /**
+   * Poll for profile changes from external sources (e.g., Home Assistant)
+   * This ensures the UI updates even if WebSocket doesn't broadcast the change
+   */
+  useEffect(() => {
+    const pollForProfileChanges = async () => {
+      try {
+        const response = await getProfileFromAPI();
+
+        if (response.success && response.data) {
+          const apiProfile = response.data.mode || response.data.profile;
+
+          // Only update if the profile has changed
+          if (apiProfile && apiProfile !== currentProfile && isProfileSupported(apiProfile)) {
+            if (isDevelopment) {
+              console.log(`[useProfile] Profile change detected via polling: ${currentProfile} -> ${apiProfile}`);
+            }
+            updateProfileState(apiProfile);
+            saveProfile(apiProfile);
+          }
+        }
+      } catch (err) {
+        // Silently fail polling - don't update error state for background polls
+        if (isDevelopment) {
+          console.warn('[useProfile] Polling error:', err);
+        }
+      }
+    };
+
+    // Start polling after initial load completes
+    if (!isLoading) {
+      const pollInterval = setInterval(pollForProfileChanges, PROFILE_POLL_INTERVAL);
+
+      return () => {
+        clearInterval(pollInterval);
+      };
+    }
+  }, [currentProfile, isLoading, isProfileSupported, updateProfileState]);
 
   return {
     currentProfile,

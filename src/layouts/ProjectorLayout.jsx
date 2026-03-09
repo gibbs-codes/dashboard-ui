@@ -10,8 +10,9 @@ import { TransitCanvas } from '../components/projector/TransitCanvas';
 import { ClockWeatherCanvas } from '../components/projector/ClockWeatherCanvas';
 import { ArtCanvas } from '../components/projector/ArtCanvas';
 import { CalendarTimelineCanvas } from '../components/projector/CalendarTimelineCanvas';
-import { FlowField } from '../components/generative/FlowField';
-import { OrbitalParticles } from '../components/generative/OrbitalParticles';
+// Algo art disabled on projector - works better on TV
+// import { FlowField } from '../components/generative/FlowField';
+// import { OrbitalParticles } from '../components/generative/OrbitalParticles';
 import { FloatingClock } from '../components/projector/FloatingClock';
 import { FloatingWeather } from '../components/projector/FloatingWeather';
 import { FloatingArtworkInfo } from '../components/projector/FloatingArtworkInfo';
@@ -21,14 +22,18 @@ import { CanvasPositionAdjuster } from '../components/debug/CanvasPositionAdjust
 /**
  * Component mapping
  * Maps string names from profile config to actual components
+ *
+ * NOTE: FlowField and OrbitalParticles are temporarily disabled on projector
+ * They work better on TV displays. To re-enable, uncomment the lines below
+ * and update profiles.js to use them in projector displays.
  */
 const COMPONENT_MAP = {
   Transit: TransitCanvas,
   ClockWeather: ClockWeatherCanvas,
   ArtCanvas: ArtCanvas,
   CalendarTimeline: CalendarTimelineCanvas,
-  FlowField: FlowField,
-  OrbitalParticles: OrbitalParticles,
+  // FlowField: FlowField,           // Disabled - better on TV
+  // OrbitalParticles: OrbitalParticles, // Disabled - better on TV
 };
 
 /**
