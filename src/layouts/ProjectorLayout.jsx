@@ -126,9 +126,17 @@ export const ProjectorLayout = ({
   wsConnected = false,
   lastUpdated = null,
 }) => {
+  // Log profile changes for debugging
+  React.useEffect(() => {
+    console.log(`[ProjectorLayout] Rendering with profile: ${profile}`);
+  }, [profile]);
+
   // Get profile configuration
   const profileConfig = PROFILES[profile] || PROFILES.default;
   const { projector } = profileConfig.displays;
+
+  // Log what components will be rendered
+  console.log(`[ProjectorLayout] Profile "${profile}" components:`, projector);
 
   // Extract canvas components
   const leftComponent = projector?.left || 'Transit';
@@ -224,6 +232,24 @@ const canvasPositions = {
         wsConnected={wsConnected}
         lastUpdated={lastUpdated}
       />
+
+      {/* Profile indicator (bottom-left) - for debugging */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '10px',
+          left: '10px',
+          padding: '4px 8px',
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          color: '#888',
+          fontSize: '12px',
+          borderRadius: '4px',
+          fontFamily: 'monospace',
+          zIndex: 9999,
+        }}
+      >
+        Profile: {profile} | L:{projector?.left} C:{projector?.center} R:{projector?.right}
+      </div>
     </div>
   );
 };

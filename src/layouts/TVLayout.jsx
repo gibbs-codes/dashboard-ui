@@ -3,6 +3,8 @@
  * Main layout wrapper for TV display with profile-based routing
  */
 
+import React from 'react';
+import { PROFILES } from '../config/profiles';
 import { TVBackground } from '../components/tv/TVBackground';
 import { ConnectionIndicator } from '../components/shared/ConnectionIndicator';
 import TVDefault from '../displays/tv/TVDefault';
@@ -13,16 +15,14 @@ import TVRelax from '../displays/tv/TVRelax';
 
 /**
  * Component mapping
- * Maps profile IDs to display components
+ * Maps display.tv values from profiles to actual components
  */
 const DISPLAY_MAP = {
-  default: TVArt,
-  morning: TVMorning,
-  focus: TVFocus,
-  work: TVArt,
-  relax: TVRelax,
-  gallery: TVRelax,
-  art: TVArt,
+  TVDefault: TVDefault,
+  TVMorning: TVMorning,
+  TVFocus: TVFocus,
+  TVArt: TVArt,
+  TVRelax: TVRelax,
 };
 
 /**
@@ -42,8 +42,19 @@ export const TVLayout = ({
   wsConnected = false,
   lastUpdated = null,
 }) => {
-  // Get display component for profile
-  const DisplayComponent = DISPLAY_MAP[profile] || TVDefault;
+  // Log profile changes for debugging
+  React.useEffect(() => {
+    console.log(`[TVLayout] Rendering with profile: ${profile}`);
+  }, [profile]);
+
+  // Get profile configuration and extract TV display type
+  const profileConfig = PROFILES[profile] || PROFILES.default;
+  const tvDisplayType = profileConfig?.displays?.tv || 'TVArt';
+
+  console.log(`[TVLayout] Profile "${profile}" using TV display: ${tvDisplayType}`);
+
+  // Get display component for the TV display type
+  const DisplayComponent = DISPLAY_MAP[tvDisplayType] || TVDefault;
 
   return (
     <div className="h-screen w-screen overflow-hidden text-white relative">
@@ -60,6 +71,24 @@ export const TVLayout = ({
         wsConnected={wsConnected}
         lastUpdated={lastUpdated}
       />
+
+      {/* Profile indicator (bottom-left) - for debugging */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '10px',
+          left: '10px',
+          padding: '4px 8px',
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          color: '#888',
+          fontSize: '12px',
+          borderRadius: '4px',
+          fontFamily: 'monospace',
+          zIndex: 9999,
+        }}
+      >
+        Profile: {profile} | TV: {tvDisplayType}
+      </div>
     </div>
   );
 };

@@ -15,10 +15,10 @@ import wsClient, { WS_EVENTS } from '../services/websocket.js';
 const isDevelopment = import.meta.env.DEV;
 
 /**
- * Polling interval for checking profile changes (5 seconds)
+ * Polling interval for checking profile changes (2 seconds)
  * This catches profile changes from external sources like Home Assistant
  */
-const PROFILE_POLL_INTERVAL = 5000;
+const PROFILE_POLL_INTERVAL = 2000;
 
 /**
  * useProfile Hook
@@ -258,43 +258,52 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
   }, [handleProfileChanged]);
 
   /**
+   * Ref to track current profile for polling comparison
+   * Using a ref avoids stale closure issues in the polling interval
+   */
+  const currentProfileRef = useRef(currentProfile);
+  useEffect(() => {
+    currentProfileRef.current = currentProfile;
+  }, [currentProfile]);
+
+  /**
    * Poll for profile changes from external sources (e.g., Home Assistant)
    * This ensures the UI updates even if WebSocket doesn't broadcast the change
    */
   useEffect(() => {
+    if (isLoading) return;
+
     const pollForProfileChanges = async () => {
       try {
         const response = await getProfileFromAPI();
+        console.log('[useProfile] Poll response:', response);
 
         if (response.success && response.data) {
           const apiProfile = response.data.mode || response.data.profile;
+          const current = currentProfileRef.current;
+
+          console.log(`[useProfile] Poll: API=${apiProfile}, Current=${current}`);
 
           // Only update if the profile has changed
-          if (apiProfile && apiProfile !== currentProfile && isProfileSupported(apiProfile)) {
-            if (isDevelopment) {
-              console.log(`[useProfile] Profile change detected via polling: ${currentProfile} -> ${apiProfile}`);
-            }
+          if (apiProfile && apiProfile !== current && isProfileSupported(apiProfile)) {
+            console.log(`[useProfile] Profile change detected via polling: ${current} -> ${apiProfile}`);
             updateProfileState(apiProfile);
             saveProfile(apiProfile);
           }
         }
       } catch (err) {
-        // Silently fail polling - don't update error state for background polls
-        if (isDevelopment) {
-          console.warn('[useProfile] Polling error:', err);
-        }
+        console.warn('[useProfile] Polling error:', err);
       }
     };
 
-    // Start polling after initial load completes
-    if (!isLoading) {
-      const pollInterval = setInterval(pollForProfileChanges, PROFILE_POLL_INTERVAL);
+    // Poll immediately on mount, then every PROFILE_POLL_INTERVAL
+    pollForProfileChanges();
+    const pollInterval = setInterval(pollForProfileChanges, PROFILE_POLL_INTERVAL);
 
-      return () => {
-        clearInterval(pollInterval);
-      };
-    }
-  }, [currentProfile, isLoading, isProfileSupported, updateProfileState]);
+    return () => {
+      clearInterval(pollInterval);
+    };
+  }, [isLoading, isProfileSupported, updateProfileState]);
 
   return {
     currentProfile,
