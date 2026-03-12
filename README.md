@@ -49,6 +49,7 @@ Opens Projector display at `http://localhost:5173/projector.html`
 npm run dev
 ```
 
+
 Then navigate to:
 - TV: `http://localhost:5173/tv.html`
 - Projector: `http://localhost:5173/projector.html`
