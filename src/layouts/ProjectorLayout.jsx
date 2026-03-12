@@ -1,10 +1,13 @@
 /**
  * ProjectorLayout Component - Fixed Canvas System
  * Three immovable positioned canvases matching original ProjectorUI repo
+ *
+ * The profile configuration comes from the API (via props) as the source of truth.
+ * This component just maps the config to the appropriate canvas components.
  */
 
 import React from 'react';
-import { PROFILES } from '../config/profiles';
+import { getProfile as getLocalProfile } from '../config/profiles';
 import { ConnectionIndicator } from '../components/shared/ConnectionIndicator';
 import { TransitCanvas } from '../components/projector/TransitCanvas';
 import { ClockWeatherCanvas } from '../components/projector/ClockWeatherCanvas';
@@ -122,6 +125,7 @@ const Canvas = ({ componentName, data, position, style, className = '' }) => {
  */
 export const ProjectorLayout = ({
   profile = 'default',
+  profileConfig = null,
   data = {},
   wsConnected = false,
   lastUpdated = null,
@@ -131,9 +135,9 @@ export const ProjectorLayout = ({
     console.log(`[ProjectorLayout] Rendering with profile: ${profile}`);
   }, [profile]);
 
-  // Get profile configuration
-  const profileConfig = PROFILES[profile] || PROFILES.default;
-  const { projector } = profileConfig.displays;
+  // Use provided config (from API), fall back to local config
+  const config = profileConfig || getLocalProfile(profile);
+  const { projector } = config.displays || {};
 
   // Log what components will be rendered
   console.log(`[ProjectorLayout] Profile "${profile}" components:`, projector);

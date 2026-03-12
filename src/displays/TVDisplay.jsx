@@ -12,6 +12,7 @@ import TVLayout from '../layouts/TVLayout';
  *
  * @param {Object} props
  * @param {string} props.profile - Profile ID
+ * @param {Object} props.profileConfig - Profile configuration from API
  * @param {Object} props.data - Dashboard data
  * @param {boolean} props.wsConnected - WebSocket connection status
  * @param {Date|null} props.lastUpdated - Last data update timestamp
@@ -19,6 +20,7 @@ import TVLayout from '../layouts/TVLayout';
  */
 export const TVDisplay = ({
   profile = 'default',
+  profileConfig = null,
   data = null,
   wsConnected = false,
   lastUpdated = null,
@@ -32,6 +34,7 @@ export const TVDisplay = ({
   return (
     <TVLayout
       profile={profile}
+      profileConfig={profileConfig}
       data={data}
       wsConnected={wsConnected}
       lastUpdated={lastUpdated}

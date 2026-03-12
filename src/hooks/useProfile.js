@@ -1,10 +1,14 @@
 /**
  * useProfile Hook
  * Manages profile state with API sync, WebSocket updates, polling, and localStorage persistence
+ *
+ * The backend is the source of truth for profiles. This hook fetches the profile
+ * configuration from the API and uses it directly. Local profiles.js is used as
+ * a fallback only when the API is unavailable.
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { getProfile, PROFILES } from '../config/profiles.js';
+import { getProfile as getLocalProfile } from '../config/profiles.js';
 import { getProfile as getProfileFromAPI, setProfile as setProfileViaAPI } from '../services/api.js';
 import { saveProfile, getProfile as getProfileFromStorage } from '../services/storage.js';
 import wsClient, { WS_EVENTS } from '../services/websocket.js';
@@ -30,7 +34,7 @@ const PROFILE_POLL_INTERVAL = 2000;
  */
 export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
   const [currentProfile, setCurrentProfile] = useState(defaultProfile);
-  const [profileConfig, setProfileConfig] = useState(getProfile(defaultProfile));
+  const [profileConfig, setProfileConfig] = useState(getLocalProfile(defaultProfile));
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -39,42 +43,27 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
 
   // Ref to track the previous profile for rollback
   const previousProfile = useRef(defaultProfile);
-
-  /**
-   * Validate if a profile is supported by the current display
-   * @param {string} profileId - Profile ID to validate
-   * @returns {boolean} True if profile is supported
-   */
-  const isProfileSupported = useCallback((profileId) => {
-    const profile = getProfile(profileId);
-    if (!profile) {
-      if (isDevelopment) {
-        console.warn(`[useProfile] Profile not found: ${profileId}`);
-      }
-      return false;
-    }
-
-    // For now, we'll allow all valid profiles
-    // In production, you could check against DISPLAY_CONFIGS.supportedProfiles
-    return true;
-  }, []);
+  const previousConfig = useRef(getLocalProfile(defaultProfile));
 
   /**
    * Update profile state and config
    * @param {string} profileId - Profile ID to set
+   * @param {Object} apiConfig - Optional config from API (preferred over local lookup)
    */
-  const updateProfileState = useCallback((profileId) => {
+  const updateProfileState = useCallback((profileId, apiConfig = null) => {
     if (!isMounted.current) return;
 
-    const config = getProfile(profileId);
+    // Prefer API config, fall back to local config
+    const config = apiConfig || getLocalProfile(profileId);
 
     if (config) {
       setCurrentProfile(profileId);
       setProfileConfig(config);
       previousProfile.current = profileId;
+      previousConfig.current = config;
 
       if (isDevelopment) {
-        console.log(`[useProfile] Profile updated: ${profileId}`);
+        console.log(`[useProfile] Profile updated: ${profileId}`, apiConfig ? '(from API)' : '(from local)');
       }
     } else {
       console.error(`[useProfile] Invalid profile: ${profileId}`);
@@ -84,34 +73,37 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
 
   /**
    * Fetch initial profile from API
+   * The API is the source of truth - it returns the full profile config including displays
    */
   const fetchInitialProfile = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // First, try to get from localStorage
+      // First, try to get from localStorage as immediate fallback
       const cachedProfile = getProfileFromStorage();
 
-      if (cachedProfile && isProfileSupported(cachedProfile)) {
+      if (cachedProfile) {
         if (isDevelopment) {
           console.log(`[useProfile] Using cached profile: ${cachedProfile}`);
         }
         updateProfileState(cachedProfile);
       }
 
-      // Then fetch from API to ensure sync
+      // Then fetch from API to ensure sync (API is source of truth)
       const response = await getProfileFromAPI();
 
       if (response.success && response.data) {
-        // API returns data.mode as the profile ID
+        // API returns full profile config including displays
         const apiProfile = response.data.mode || response.data.profile;
+        const apiConfig = response.data;
 
-        if (apiProfile && isProfileSupported(apiProfile)) {
-          updateProfileState(apiProfile);
+        if (apiProfile) {
+          // Use the full config from API (includes displays)
+          updateProfileState(apiProfile, apiConfig);
           saveProfile(apiProfile);
         } else {
-          console.warn(`[useProfile] API returned unsupported profile: ${apiProfile}, using default`);
+          console.warn(`[useProfile] API returned no profile, using default`);
           updateProfileState(defaultProfile);
           saveProfile(defaultProfile);
         }
@@ -132,7 +124,7 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
       // Fall back to cached or default
       const cachedProfile = getProfileFromStorage();
 
-      if (cachedProfile && isProfileSupported(cachedProfile)) {
+      if (cachedProfile) {
         updateProfileState(cachedProfile);
       } else {
         updateProfileState(defaultProfile);
@@ -145,7 +137,7 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
         setIsLoading(false);
       }
     }
-  }, [defaultProfile, isProfileSupported, updateProfileState]);
+  }, [defaultProfile, updateProfileState]);
 
   /**
    * Set a new profile (with optimistic update and rollback on error)
@@ -153,18 +145,12 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
    * @returns {Promise<boolean>} True if successful
    */
   const setProfile = useCallback(async (newProfile) => {
-    if (!isProfileSupported(newProfile)) {
-      const errorMsg = `Profile '${newProfile}' is not supported on this display`;
-      console.error(`[useProfile] ${errorMsg}`);
-      setError(errorMsg);
-      return false;
-    }
-
-    // Store previous profile for potential rollback
+    // Store previous profile and config for potential rollback
     const rollbackProfile = currentProfile;
+    const rollbackConfig = previousConfig.current;
 
     try {
-      // Optimistic update
+      // Optimistic update (use local config temporarily)
       updateProfileState(newProfile);
       saveProfile(newProfile);
       setError(null);
@@ -173,11 +159,16 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
         console.log(`[useProfile] Setting profile to: ${newProfile}`);
       }
 
-      // Persist to API
+      // Persist to API - backend validates the profile
       const response = await setProfileViaAPI(newProfile);
 
       if (!response.success) {
         throw new Error(response.error || 'Failed to set profile');
+      }
+
+      // Update with the full config from API response
+      if (response.data) {
+        updateProfileState(newProfile, response.data);
       }
 
       // Broadcast via WebSocket (if connected)
@@ -201,7 +192,7 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
         console.log(`[useProfile] Rolling back to: ${rollbackProfile}`);
       }
 
-      updateProfileState(rollbackProfile);
+      updateProfileState(rollbackProfile, rollbackConfig);
       saveProfile(rollbackProfile);
 
       const errorMsg = err.message || 'Failed to set profile';
@@ -209,7 +200,7 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
 
       return false;
     }
-  }, [currentProfile, isProfileSupported, updateProfileState]);
+  }, [currentProfile, updateProfileState]);
 
   /**
    * Handle WebSocket profile change events
@@ -226,14 +217,10 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
     // Don't update if it's the same profile
     if (newProfile === currentProfile) return;
 
-    // Validate and update
-    if (isProfileSupported(newProfile)) {
-      updateProfileState(newProfile);
-      saveProfile(newProfile);
-    } else {
-      console.warn(`[useProfile] Received unsupported profile via WebSocket: ${newProfile}`);
-    }
-  }, [currentProfile, isProfileSupported, updateProfileState]);
+    // Update with data from WebSocket (may include full config)
+    updateProfileState(newProfile, data);
+    saveProfile(newProfile);
+  }, [currentProfile, updateProfileState]);
 
   /**
    * Initialize profile on mount
@@ -276,18 +263,24 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
     const pollForProfileChanges = async () => {
       try {
         const response = await getProfileFromAPI();
-        console.log('[useProfile] Poll response:', response);
+
+        if (isDevelopment) {
+          console.log('[useProfile] Poll response:', response);
+        }
 
         if (response.success && response.data) {
           const apiProfile = response.data.mode || response.data.profile;
+          const apiConfig = response.data;
           const current = currentProfileRef.current;
 
-          console.log(`[useProfile] Poll: API=${apiProfile}, Current=${current}`);
+          if (isDevelopment) {
+            console.log(`[useProfile] Poll: API=${apiProfile}, Current=${current}`);
+          }
 
           // Only update if the profile has changed
-          if (apiProfile && apiProfile !== current && isProfileSupported(apiProfile)) {
+          if (apiProfile && apiProfile !== current) {
             console.log(`[useProfile] Profile change detected via polling: ${current} -> ${apiProfile}`);
-            updateProfileState(apiProfile);
+            updateProfileState(apiProfile, apiConfig);
             saveProfile(apiProfile);
           }
         }
@@ -303,7 +296,7 @@ export const useProfile = (defaultProfile = 'default', displayType = 'tv') => {
     return () => {
       clearInterval(pollInterval);
     };
-  }, [isLoading, isProfileSupported, updateProfileState]);
+  }, [isLoading, updateProfileState]);
 
   return {
     currentProfile,

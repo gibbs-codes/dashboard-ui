@@ -1,10 +1,13 @@
 /**
  * TVLayout Component
  * Main layout wrapper for TV display with profile-based routing
+ *
+ * The profile configuration comes from the API (via props) as the source of truth.
+ * This component just maps the config to the appropriate display components.
  */
 
 import React from 'react';
-import { PROFILES } from '../config/profiles';
+import { getProfile as getLocalProfile } from '../config/profiles';
 import { TVBackground } from '../components/tv/TVBackground';
 import { ConnectionIndicator } from '../components/shared/ConnectionIndicator';
 import TVDefault from '../displays/tv/TVDefault';
@@ -31,6 +34,7 @@ const DISPLAY_MAP = {
  *
  * @param {Object} props
  * @param {string} props.profile - Profile ID
+ * @param {Object} props.profileConfig - Profile configuration from API (source of truth)
  * @param {Object} props.data - Dashboard data
  * @param {boolean} props.wsConnected - WebSocket connection status
  * @param {Date|null} props.lastUpdated - Last data update timestamp
@@ -38,6 +42,7 @@ const DISPLAY_MAP = {
  */
 export const TVLayout = ({
   profile = 'default',
+  profileConfig = null,
   data = {},
   wsConnected = false,
   lastUpdated = null,
@@ -47,9 +52,9 @@ export const TVLayout = ({
     console.log(`[TVLayout] Rendering with profile: ${profile}`);
   }, [profile]);
 
-  // Get profile configuration and extract TV display type
-  const profileConfig = PROFILES[profile] || PROFILES.default;
-  const tvDisplayType = profileConfig?.displays?.tv || 'TVArt';
+  // Use provided config (from API), fall back to local config
+  const config = profileConfig || getLocalProfile(profile);
+  const tvDisplayType = config?.displays?.tv || 'TVArt';
 
   console.log(`[TVLayout] Profile "${profile}" using TV display: ${tvDisplayType}`);
 

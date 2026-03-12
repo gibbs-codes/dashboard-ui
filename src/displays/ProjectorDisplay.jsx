@@ -12,6 +12,7 @@ import ProjectorLayout from '../layouts/ProjectorLayout';
  *
  * @param {Object} props
  * @param {string} props.profile - Profile ID
+ * @param {Object} props.profileConfig - Profile configuration from API
  * @param {Object} props.data - Dashboard data
  * @param {boolean} props.wsConnected - WebSocket connection status
  * @param {Date|null} props.lastUpdated - Last data update timestamp
@@ -19,6 +20,7 @@ import ProjectorLayout from '../layouts/ProjectorLayout';
  */
 export const ProjectorDisplay = ({
   profile = 'default',
+  profileConfig = null,
   onProfileChange,
   data = null,
   wsConnected = false,
@@ -33,6 +35,7 @@ export const ProjectorDisplay = ({
   return (
     <ProjectorLayout
       profile={profile}
+      profileConfig={profileConfig}
       onProfileChange={onProfileChange}
       data={data}
       wsConnected={wsConnected}

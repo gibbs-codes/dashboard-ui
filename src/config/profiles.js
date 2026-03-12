@@ -1,24 +1,24 @@
 /**
- * Profile Configuration
- * Profile system optimized for signage displays (TV and Projector)
+ * Profile Configuration (Local Fallback)
+ *
+ * NOTE: The backend (lifestack) is the source of truth for profiles.
+ * This file is used as a fallback when the API is unavailable.
+ * Keep this in sync with: lifestack/services/dashboard/profiles.js
+ *
+ * Each profile specifies:
+ * 1. Data sources to include (what to fetch from backend)
+ * 2. Display configuration (what components to render on TV/projector)
  */
 
-/**
- * Profile Definitions
- * Each profile defines what data to fetch and which components to display
- */
 export const PROFILES = {
-  /**
-   * Default Profile
-   * Fullpage art with weather and time
-   */
+  // Default profile - Art display with weather and transit
   default: {
     id: 'default',
     name: 'Default',
     description: 'Fullpage art display with weather and time',
     data: {
       weather: true,
-      transit: true,        // Make sure this is true
+      transit: true,
       calendar: false,
       tasks: false,
       nextEvent: false,
@@ -27,17 +27,14 @@ export const PROFILES = {
     displays: {
       tv: 'TVArt',
       projector: {
-        left: 'Transit',           // Transit data
-        center: 'ArtCanvas',    // Clock/Weather (CHANGE THIS)
-        right: 'ArtCanvas',         // Artwork
+        left: 'Transit',
+        center: 'ArtCanvas',
+        right: 'ArtCanvas',
       },
     },
   },
 
-  /**
-   * Relax Profile
-   * Generative art mode on TV, museum art on projector
-   */
+  // Relax profile - Generative art on TV, museum art on projector
   relax: {
     id: 'relax',
     name: 'Relax Mode',
@@ -60,13 +57,10 @@ export const PROFILES = {
     },
   },
 
-  /**
-   * Gallery Profile
-   * Museum art gallery display
-   */
+  // Gallery profile - Art focused with weather and transit
   gallery: {
     id: 'gallery',
-    name: 'Gallery Mode',
+    name: 'Gallery',
     description: 'Museum art gallery with transit',
     data: {
       weather: true,
@@ -86,10 +80,145 @@ export const PROFILES = {
     },
   },
 
-  /**
-   * Ambient Profile
-   * Generative art on TV, museum art on projector
-   */
+  // Morning profile - Weather, next event, and urgent tasks
+  morning: {
+    id: 'morning',
+    name: 'Morning',
+    description: 'Morning briefing - weather, next event, and urgent tasks',
+    data: {
+      weather: true,
+      transit: true,
+      calendar: true,
+      tasks: true,
+      nextEvent: true,
+      artwork: true,
+    },
+    displays: {
+      tv: 'TVArt',
+      projector: {
+        left: 'Transit',
+        center: 'ClockWeather',
+        right: 'ArtCanvas',
+      },
+    },
+  },
+
+  // Focus profile - Next event only with art
+  focus: {
+    id: 'focus',
+    name: 'Focus',
+    description: 'Focus mode - next event and art only',
+    data: {
+      weather: false,
+      transit: false,
+      calendar: false,
+      tasks: false,
+      nextEvent: true,
+      artwork: true,
+    },
+    displays: {
+      tv: 'TVRelax',
+      projector: {
+        left: 'ArtCanvas',
+        center: 'ClockWeather',
+        right: 'ArtCanvas',
+      },
+    },
+  },
+
+  // Work profile - Tasks and calendar only
+  work: {
+    id: 'work',
+    name: 'Work',
+    description: 'Work focus - calendar and tasks',
+    data: {
+      weather: false,
+      transit: false,
+      calendar: true,
+      tasks: true,
+      nextEvent: true,
+      artwork: false,
+    },
+    displays: {
+      tv: 'TVArt',
+      projector: {
+        left: 'Transit',
+        center: 'ClockWeather',
+        right: 'ArtCanvas',
+      },
+    },
+  },
+
+  // Personal profile - Full dashboard with all data
+  personal: {
+    id: 'personal',
+    name: 'Personal',
+    description: 'Full dashboard with calendar, tasks, weather, and transit',
+    data: {
+      weather: true,
+      transit: true,
+      calendar: true,
+      tasks: true,
+      nextEvent: true,
+      artwork: true,
+    },
+    displays: {
+      tv: 'TVArt',
+      projector: {
+        left: 'Transit',
+        center: 'ClockWeather',
+        right: 'ArtCanvas',
+      },
+    },
+  },
+
+  // Guest profile - Public data only (weather and transit)
+  guest: {
+    id: 'guest',
+    name: 'Guest',
+    description: 'Public information only - weather and transit',
+    data: {
+      weather: true,
+      transit: true,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+      artwork: true,
+    },
+    displays: {
+      tv: 'TVArt',
+      projector: {
+        left: 'Transit',
+        center: 'ArtCanvas',
+        right: 'ArtCanvas',
+      },
+    },
+  },
+
+  // Transit profile - Transit information only
+  transit: {
+    id: 'transit',
+    name: 'Transit',
+    description: 'Transit information only',
+    data: {
+      weather: false,
+      transit: true,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+      artwork: false,
+    },
+    displays: {
+      tv: 'TVArt',
+      projector: {
+        left: 'Transit',
+        center: 'ClockWeather',
+        right: 'ArtCanvas',
+      },
+    },
+  },
+
+  // Ambient profile - Generative art, no transit
   ambient: {
     id: 'ambient',
     name: 'Ambient',
@@ -112,10 +241,7 @@ export const PROFILES = {
     },
   },
 
-  /**
-   * Commute Profile
-   * Transit-focused with clock
-   */
+  // Commute profile - Transit-focused with clock
   commute: {
     id: 'commute',
     name: 'Commute',
@@ -138,10 +264,7 @@ export const PROFILES = {
     },
   },
 
-  /**
-   * Artshow Profile
-   * Museum art in all canvases
-   */
+  // Artshow profile - Museum art in all canvases
   artshow: {
     id: 'artshow',
     name: 'Art Show',
@@ -164,10 +287,7 @@ export const PROFILES = {
     },
   },
 
-  /**
-   * Minimal Profile
-   * Just clock and weather with art
-   */
+  // Minimal profile - Just clock and weather with art
   minimal: {
     id: 'minimal',
     name: 'Minimal',
@@ -190,10 +310,7 @@ export const PROFILES = {
     },
   },
 
-  /**
-   * Flow Profile
-   * FlowField on TV, transit + art on projector
-   */
+  // Flow profile - Flow art on TV, transit + art on projector
   flow: {
     id: 'flow',
     name: 'Flow',
@@ -216,10 +333,7 @@ export const PROFILES = {
     },
   },
 
-  /**
-   * Orbital Profile
-   * Orbital particles on TV, clock + art on projector
-   */
+  // Orbital profile - Orbital art on TV, clock + art on projector
   orbital: {
     id: 'orbital',
     name: 'Orbital',
@@ -244,9 +358,9 @@ export const PROFILES = {
 };
 
 /**
- * Get profile by ID
+ * Get profile by ID (fallback for when API is unavailable)
  * @param {string} profileId - Profile ID
- * @returns {Object|null} Profile configuration or null if not found
+ * @returns {Object|null} Profile configuration or default if not found
  */
 export const getProfile = (profileId) => {
   return PROFILES[profileId] || PROFILES.default;
