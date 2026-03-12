@@ -236,24 +236,6 @@ const canvasPositions = {
         wsConnected={wsConnected}
         lastUpdated={lastUpdated}
       />
-
-      {/* Profile indicator (bottom-left) - for debugging */}
-      <div
-        style={{
-          position: 'fixed',
-          bottom: '10px',
-          left: '10px',
-          padding: '4px 8px',
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          color: '#888',
-          fontSize: '12px',
-          borderRadius: '4px',
-          fontFamily: 'monospace',
-          zIndex: 9999,
-        }}
-      >
-        Profile: {profile} | L:{projector?.left} C:{projector?.center} R:{projector?.right}
-      </div>
     </div>
   );
 };
