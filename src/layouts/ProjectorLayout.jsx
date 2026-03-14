@@ -13,9 +13,9 @@ import { TransitCanvas } from '../components/projector/TransitCanvas';
 import { ClockWeatherCanvas } from '../components/projector/ClockWeatherCanvas';
 import { ArtCanvas } from '../components/projector/ArtCanvas';
 import { CalendarTimelineCanvas } from '../components/projector/CalendarTimelineCanvas';
-// Algo art disabled on projector - works better on TV
-// import { FlowField } from '../components/generative/FlowField';
-// import { OrbitalParticles } from '../components/generative/OrbitalParticles';
+import { NextEventCanvas } from '../components/projector/NextEventCanvas';
+import { WeatherForecastCanvas } from '../components/projector/WeatherForecastCanvas';
+import { ShapeField } from '../components/generative/ShapeField';
 import { FloatingClock } from '../components/projector/FloatingClock';
 import { FloatingWeather } from '../components/projector/FloatingWeather';
 import { FloatingArtworkInfo } from '../components/projector/FloatingArtworkInfo';
@@ -35,8 +35,9 @@ const COMPONENT_MAP = {
   ClockWeather: ClockWeatherCanvas,
   ArtCanvas: ArtCanvas,
   CalendarTimeline: CalendarTimelineCanvas,
-  // FlowField: FlowField,           // Disabled - better on TV
-  // OrbitalParticles: OrbitalParticles, // Disabled - better on TV
+  NextEvent: NextEventCanvas,
+  WeatherForecast: WeatherForecastCanvas,
+  ShapeField: ShapeField,
 };
 
 /**
@@ -61,23 +62,22 @@ const getComponentProps = (componentName, data, position) => {
       return { weatherData: data?.weather || null };
     case 'CalendarTimeline':
       return { events: data?.events || [] };
+    case 'NextEvent':
+      return { events: data?.events || [] };
+    case 'WeatherForecast':
+      return { weatherData: data?.weather || null };
     case 'ArtCanvas':
       // Determine which artwork based on canvas position
       const artworkData = position === 'center'
         ? data?.artworkCenter
         : data?.artworkRight;
       return { artwork: artworkData || null };
-    case 'FlowField':
+    case 'ShapeField':
       return {
         width: dimensions.width,
         height: dimensions.height,
-        speed: 1.0,
-      };
-    case 'OrbitalParticles':
-      return {
-        width: dimensions.width,
-        height: dimensions.height,
-        speed: 1.0,
+        speed: 0.8,
+        mood: 'evening',
       };
     default:
       return {};

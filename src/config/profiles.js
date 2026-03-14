@@ -80,25 +80,25 @@ export const PROFILES = {
     },
   },
 
-  // Morning profile - Weather, next event, and urgent tasks
+  // Morning profile - Info-heavy: transit, next event, weather forecast, briefing on TV
   morning: {
     id: 'morning',
     name: 'Morning',
-    description: 'Morning briefing - weather, next event, and urgent tasks',
+    description: 'Morning briefing - transit, next event, weather forecast',
     data: {
       weather: true,
       transit: true,
       calendar: true,
       tasks: true,
       nextEvent: true,
-      artwork: true,
+      artwork: false,
     },
     displays: {
-      tv: 'TVArt',
+      tv: 'TVMorning',
       projector: {
         left: 'Transit',
-        center: 'ClockWeather',
-        right: 'ArtCanvas',
+        center: 'NextEvent',
+        right: 'WeatherForecast',
       },
     },
   },
@@ -352,6 +352,52 @@ export const PROFILES = {
         left: 'ArtCanvas',
         center: 'ClockWeather',
         right: 'ArtCanvas',
+      },
+    },
+  },
+
+  // Evening profile - Moody geometric shapes on projector, flow on TV
+  evening: {
+    id: 'evening',
+    name: 'Evening',
+    description: 'Moody evening ambiance with geometric shapes',
+    data: {
+      weather: true,
+      transit: false,
+      calendar: false,
+      tasks: false,
+      nextEvent: false,
+      artwork: true,
+    },
+    displays: {
+      tv: 'TVRelax',
+      projector: {
+        left: 'ShapeField',
+        center: 'ShapeField',
+        right: 'ShapeField',
+      },
+    },
+  },
+
+  // Experimental profile - For testing new features
+  experimental: {
+    id: 'experimental',
+    name: 'Experimental',
+    description: 'Testing ground for new features',
+    data: {
+      weather: true,
+      transit: true,
+      calendar: true,
+      tasks: true,
+      nextEvent: true,
+      artwork: true,
+    },
+    displays: {
+      tv: 'TVArt',
+      projector: {
+        left: 'Transit',
+        center: 'NextEvent',
+        right: 'WeatherForecast',
       },
     },
   },
